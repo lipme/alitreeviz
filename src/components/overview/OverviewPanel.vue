@@ -8,10 +8,16 @@
             v-model="displayMetadata"
             label="Displays Metadata"
           ></v-switch>
-          <v-switch v-model="displaySelection" label="displays selection"></v-switch>
+          <v-switch
+            v-model="displaySelection"
+            label="displays selection"
+          ></v-switch>
           <v-switch v-model="displayTracks" label="displays tracks"></v-switch>
           <v-switch v-model="displayScale" label="displays scale"></v-switch>
-          <v-switch v-model="aaColoring" label="on: amino acid coloring, off: nucleotide coloring"></v-switch>
+          <v-switch
+            v-model="aaColoring"
+            label="on: amino acid coloring, off: nucleotide coloring"
+          ></v-switch>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -28,7 +34,8 @@
       :display-tracks="displayTracks"
       :display-scale="displayScale"
       :seqs="seqs"
-      :selectable="true"
+      :selection="selection"
+      :selectable="false"
       :width="width"
       :tracks="tracks"
       :height-tracks="20"
@@ -59,6 +66,17 @@ export default {
         return []
       }
     },
+    selection: {
+      type: Object,
+      default: () => {
+        return {
+          startSeq: -1,
+          endSeq: 100000000,
+          startPos: -1,
+          endPos: 100000000
+        }
+      }
+    },
     width: {
       type: Number,
       default: 600
@@ -81,7 +99,10 @@ export default {
         {
           features: [
             {
-              positions: [[1, 20], [109, 234]],
+              positions: [
+                [1, 20],
+                [109, 234]
+              ],
               type: 'label1',
               color: 'green'
             },
@@ -96,7 +117,10 @@ export default {
         {
           features: [
             {
-              positions: [[2, 32], [109, 234]],
+              positions: [
+                [2, 32],
+                [109, 234]
+              ],
               type: 'label1',
               color: 'green'
             },
@@ -114,26 +138,29 @@ export default {
   computed: {
     length () {
       console.log(
-        this.seqs.map(s => {
+        this.seqs.map((s) => {
           return s.seq ? s.seq.length : 0
         })
       )
       console.log(
         'max',
         Math.max(
-          ...this.seqs.map(s => {
+          ...this.seqs.map((s) => {
             return s.seq ? s.seq.length : 0
           })
         )
       )
       return Math.max(
-        ...this.seqs.map(s => {
+        ...this.seqs.map((s) => {
           return s.seq ? s.seq.length : 0
         })
       )
     },
     trackHeight () {
-      return (this.heightTracks - this.tracks.length * this.trackSep) / this.tracks.length
+      return (
+        (this.heightTracks - this.tracks.length * this.trackSep) /
+        this.tracks.length
+      )
     },
     coloringMode () {
       return this.aaColoring ? 'aa' : 'nt'

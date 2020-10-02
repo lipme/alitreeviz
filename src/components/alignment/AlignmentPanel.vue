@@ -19,6 +19,22 @@
       </v-card>
     </v-dialog>
 
+     <vue-slider
+      v-if="maxPos < maxLengthSeqs"
+      v-model="rangeSlider"
+      :max="maxLengthSeqs"
+      :min="0"
+      :min-range="maxPos"
+      :max-range="maxPos"
+      :fixed="true"
+      :use-keyboard="true"
+      @change="moveSlider"
+    >
+      <template v-slot:dot="{ value, focus }">
+        <div :class="['custom-dot', { focus }]"></div>
+      </template>
+    </vue-slider>
+
     <svg-msa
       :start="rangeSlider[0] + 1"
       :end="rangeSlider[1] + 1"
@@ -34,12 +50,16 @@
 <script>
 import { displayParameters } from '@/mixins/displayParameters.js'
 
+import VueSlider from 'vue-slider-component'
+import 'vue-slider-component/theme/default.css'
+
 import { SvgMsa } from 'vue-svg-msa'
 import 'vue-svg-msa/dist/vue-svg-msa.css'
 
 export default {
   components: {
-    SvgMsa
+    SvgMsa,
+    VueSlider
   },
   // import :
   // showParameters props

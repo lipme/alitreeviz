@@ -1,19 +1,37 @@
 <template
   >
-  <div>
+  <div class="fillHeight">
     <!-- dialog visible during the page loading -->
     <loading-dialog
       :loading="loading"
       :loadingmsg="loadingmsg"
     ></loading-dialog>
 
-    <v-alert v-model="errored" type="error" dark width="500px" @click="errored=false" dismissible>
+    <v-alert
+      v-model="errored"
+      type="error"
+      dark
+      width="500px"
+      @click="errored = false"
+      dismissible
+    >
       {{ errormsg }}
     </v-alert>
 
-    <v-row v-if="!errored" dense justify="space-between">
+    <v-row v-if="!errored" dense justify="space-between" class="mt-3 ml-3">
       <v-col class="text-left">
-        <file-upload-field label button-label="Get Multifasta alignment file" @load="loadFasta"></file-upload-field>
+        <v-row justify="start">
+          <file-upload-field
+            label
+            button-label="Get Multifasta alignment file"
+            @load="loadFasta"
+          ></file-upload-field>
+          <file-upload-field
+            label
+            button-label="Get newick file"
+            @load="loadNewick"
+          ></file-upload-field>
+        </v-row>
       </v-col>
       <v-col class="text-right">
         <v-row justify="end">
@@ -41,14 +59,16 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-container v-if="!loading && !errored" fluid>
-      <v-row no-gutters>
-        <v-col cols="12" :md="nbColsTreePanel"  v-show="displayTree" v-if="tree != null">
-          <v-row no-gutters>
+    <v-container v-if="!loading && !errored" fluid class="align-stretch">
+        <v-row no-gutters >
             <v-col
               ref="colTree"
               v-resize="resizeTree"
-              style="min-height: 600px;"
+              style="min-height: 600px;max-height:800px;"
+              cols="12"
+          :md="nbColsTreePanel"
+          v-show="displayTree"
+          v-if="tree != null"
             >
               <v-card-gene-explore
                 color="blue"
@@ -59,24 +79,26 @@
                 <tree
                   ref="tree"
                   :height="heightTree - 100"
-                  :width="widthTree"
+                  :width="widthTree - 20"
                   :show-parameters="showTreeParameters"
                   :tree="tree"
                   :nodes-to-select="nodeToSelect"
-                  @select-node="selectNode"
+                  @select-node="selectNodes"
                   @hideParameters="showTreeParameters = false"
                 ></tree>
               </v-card-gene-explore>
             </v-col>
-          </v-row>
-        </v-col>
-        <v-col cols="12" v-show="displayOverview"
-              v-if="seqs != null">
+        <v-col
+          cols="12"
+          :md="nbColsAlignmentPanel"
+          v-show="displayOverview || displayAln"
+          v-if="seqs != null"
+        >
           <v-row justify="space-between" no-gutters>
             <v-col
-
               ref="colOverview"
               v-resize="resizeOverview"
+              v-show="displayOverview"
             >
               <v-card-gene-explore
                 color="orange"
@@ -92,14 +114,13 @@
                     :width="widthOverview"
                     :tracks="tracks"
                     @hideParameters="showAlignmentOverviewParameters = false"
-                    @overviewselect="selectSequencesFromOverview"
                   ></overview-panel>
                 </v-container>
               </v-card-gene-explore>
             </v-col>
           </v-row>
           <v-row no-gutters>
-            <v-col>
+            <v-col v-show="displayAln">
               <v-card-gene-explore
                 color="#006400"
                 title="Alignment Details"
@@ -113,12 +134,12 @@
                   :show-parameters="showAlignmentParameters"
                   :show-help="showAlignmentHelp"
                   :tracks="tracks"
-                  :seqs="seqs"
+                  :seqs="selectedSeqs"
                   :currentid="selectedNodeId"
                   :selectedids="selectSeqIds"
                   @hideHelp="showAlignmentHelp = false"
                   @hideParameters="showAlignmentParameters = false"
-                  @select-node="selectNode"
+                  @select-node="selectNodes"
                   @extract="setSelectionFromAlignment"
                 ></alignment-panel>
               </v-card-gene-explore>
@@ -143,7 +164,7 @@ import LoadingDialog from '@/components/generic/LoadingDialog.vue'
 
 import FileUploadField from '@/components/file/FileGetContentField'
 
-const nbPositionsDisplayed = 160
+const nbPositionsDisplayed = 60
 
 const Fasta = require('biojs-io-fasta')
 
@@ -159,20 +180,6 @@ export default {
     PanelButton,
     VCardGeneExplore,
     FileUploadField
-  },
-  props: {
-    species: {
-      type: String,
-      default: ''
-    },
-    release: {
-      type: String,
-      default: ''
-    },
-    geneId: {
-      type: String,
-      default: ''
-    }
   },
   data () {
     return {
@@ -215,28 +222,49 @@ export default {
       selectionFromOverview: {
         startPos: 0,
         endPos: nbPositionsDisplayed
-      },
-      sequences: []
+      }
     }
   },
 
   computed: {
     lengthSequence () {
-      if (this.sequences.length > 0) {
-        return this.sequences[0].seq.length
+      if (this.seqs != null && this.seqs.length > 0) {
+        return this.seqs[0].seq.length
       }
       return 0
     },
     nbColsAlignmentPanel () {
-      return this.displayTree || this.displaySearch ? 8 : 12
+      return this.tree != null && this.displayTree ? 8 : 12
     },
     nbColsTreePanel () {
-      return this.displayAln || this.displayOverview || this.displayStats
+      return this.seqs != null && (this.displayAln || this.displayOverview)
         ? 4
         : 12
     },
     nodeToSelect () {
       return [this.selectedNodeId]
+    },
+    selectedSeqs () {
+      let startSeq = this.overviewSelection.startSeq
+      let endSeq = this.overviewSelection.endSeq
+
+      if (startSeq < 0) {
+        startSeq = 0
+      }
+      if (endSeq >= this.seqs.length) {
+        endSeq = this.seqs.length - 1
+      }
+
+      const l = endSeq - startSeq + 1
+
+      const selectedSeqs = []
+
+      for (let index = 0; index < l; index++) {
+        const seq = this.seqs[index]
+        selectedSeqs.push(seq)
+      }
+
+      return selectedSeqs
     }
   },
   watch: {
@@ -266,32 +294,26 @@ export default {
      *  change the selectednode id
      *  compute the overviewSelection positions
      */
-    selectNode (node) {
-      if (node.length > 0) {
-        this.selectedNodeId = node[0]
-      } else {
-        this.selectedNodeId = this.tree.getId()
+    selectNodes (ids) {
+      console.log('selectNodes', ids)
+      if (this.seqs != null) {
+        const indices = []
+        for (let index = 0; index < this.seqs.length; index++) {
+          const seq = this.seqs[index]
+          if (ids.includes(seq.name)) {
+            indices.push(index)
+          }
+        }
+
+        console.log({ indices })
+
+        const min = Math.min(...indices)
+        const max = Math.max(...indices)
+        this.overviewSelection = Object.assign({}, this.overviewSelection, {
+          startSeq: min,
+          endSeq: max
+        })
       }
-
-      let indices = []
-      if (this.selectedNodeId !== '') {
-        const selectedSequences = this.tree.getSequencesWithMinDist(
-          this.selectedNodeId,
-          0,
-          0
-        )
-
-        indices = selectedSequences
-          .filter((s) => 'leave_number' in s)
-          .map((s) => parseInt(s.leave_number) - 1)
-      }
-
-      const min = Math.min(...indices)
-      const max = Math.max(...indices)
-      this.overviewSelection = Object.assign({}, this.overviewSelection, {
-        startSeq: min,
-        endSeq: max
-      })
 
       Vue.nextTick()
     },
@@ -308,6 +330,7 @@ export default {
     },
 
     resizeTree () {
+      console.log('resize tree')
       if (this.loading === false) {
         this.heightTree =
           'colTree' in this.$refs ? this.$refs.colTree.clientHeight : 400
@@ -374,17 +397,17 @@ export default {
       const leaveIds = []
 
       const startSeq =
-        selection.startSeq > 0 && selection.startSeq < this.sequences.length
+        selection.startSeq > 0 && selection.startSeq < this.seqs.length
           ? selection.startSeq
           : 0
 
       const endSeq =
-        selection.endSeq > 0 && selection.endSeq < this.sequences.length
+        selection.endSeq > 0 && selection.endSeq < this.seqs.length
           ? selection.endSeq
-          : this.sequences.length - 1
+          : this.seqs.length - 1
 
       for (let i = startSeq; i <= endSeq; i++) {
-        leaveIds.push(this.sequences[i].id)
+        leaveIds.push(this.seqs[i].id)
       }
 
       this.selectSeqIds = leaveIds
@@ -418,6 +441,10 @@ export default {
       this.seqs = Fasta.parse(multifasta)
       this.displayAln = true
       this.displayOverview = true
+    },
+    loadNewick (newick) {
+      this.tree = newick
+      this.displayTree = true
     }
   },
   /**
@@ -450,8 +477,7 @@ export default {
   margin: 100px auto;
 }
 
-.col {
-  width:100%;
+.fillHeight {
+  height:100%;
 }
-
 </style>

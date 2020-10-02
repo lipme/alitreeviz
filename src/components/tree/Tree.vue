@@ -21,15 +21,15 @@
     </v-dialog>
     <vue-phylogram
       ref="phylo"
-      :input-tree="tree"
+      :newick="tree"
       :height="height"
       :width="width"
-      branch-length-key="branchLength"
       :branch-lengths="showPhylogram"
       :align-labels="alignLabels"
       :selected="nodesToSelect.join(',')"
       :display-leaves="false"
       @click-node="clickNodeFn"
+      @click-outside="clickOutsideFn"
       @select-nodes="selectNodes"
       @hover-node="hoverNodeFn"
       @hover-label="hoverNodeFn"
@@ -80,10 +80,8 @@ export default {
       default: 800
     },
     tree: {
-      type: Object,
-      default: () => {
-        return {}
-      }
+      type: String,
+      default: null
     },
     nodesToSelect: {
       type: Array,
@@ -105,10 +103,13 @@ export default {
   },
   methods: {
     clickNodeFn (e, node) {
-      if ('consensus' in node.data) {
-        this.$refs.phylo.deselectAll()
-        this.$refs.phylo.selectNode(node)
-      }
+      console.log('select ', node)
+      this.$refs.phylo.deselectAll()
+      this.$refs.phylo.selectNode(node)
+    },
+    clickOutsideFn (e, node) {
+      console.log('click outside')
+      this.$refs.phylo.deselectAll()
     },
     hoverNodeFn (e, node) {
       this.nodeInfo = { id: node.data.id, name: node.data.name }
