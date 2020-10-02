@@ -280,11 +280,9 @@ export default {
         endSeq = this.seqs.length - 1
       }
 
-      const l = endSeq - startSeq + 1
-
       let selectedSeqs = []
 
-      for (let index = 0; index < l; index++) {
+      for (let index = startSeq; index <= endSeq; index++) {
         const seq = this.seqs[index]
         selectedSeqs.push(seq)
       }
