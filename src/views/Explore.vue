@@ -19,21 +19,46 @@
     </v-alert>
 
     <v-row v-if="!errored" dense justify="space-between" class="mt-3 ml-3">
-      <v-col class="text-left">
+      <v-col class="text-left" cols="8">
         <v-row justify="start">
           <file-upload-field
             label
-            button-label="Get Multifasta alignment file"
+            button-label="Load Multifasta alignment file"
             @load="loadFasta"
           ></file-upload-field>
           <file-upload-field
             label
-            button-label="Get newick file"
+            button-label="Load newick file"
             @load="loadNewick"
           ></file-upload-field>
+          <file-upload-field
+            label
+            button-label="Load new position file"
+            @load="loadPositionFile"
+            title="Load a position file. The first column must contain single positions or ranges, i.e 2 positions separated by '-' (e.g 100-110)"
+          ></file-upload-field>
+          <panel-button
+            label=""
+            :color="colorTrack"
+            :show="true"
+            title="Click to change color of the new track"
+            @click="toggleColorPicker"
+          ></panel-button>
+          <v-color-picker
+            v-show="showColorPicker"
+            dot-size="25"
+            v-model="colorTrack"
+          ></v-color-picker>
+          <v-text-field
+            single-line
+            v-model="labelTrack"
+            label="track label"
+            style="max-width: 100px"
+            title="change the label of the new track"
+          ></v-text-field>
         </v-row>
       </v-col>
-      <v-col class="text-right">
+      <v-col class="text-right" cols="4">
         <v-row justify="end">
           <panel-button
             label="T"
@@ -60,34 +85,34 @@
       </v-col>
     </v-row>
     <v-container v-if="!loading && !errored" fluid class="align-stretch">
-        <v-row no-gutters >
-            <v-col
-              ref="colTree"
-              v-resize="resizeTree"
-              style="min-height: 600px;max-height:800px;"
-              cols="12"
+      <v-row no-gutters>
+        <v-col
+          ref="colTree"
+          v-resize="resizeTree"
+          style="min-height: 600px; max-height: 800px"
+          cols="12"
           :md="nbColsTreePanel"
           v-show="displayTree"
           v-if="tree != null"
-            >
-              <v-card-gene-explore
-                color="blue"
-                title="Tree"
-                @showParameters="showTreeParameters = true"
-                @hide="hideTree"
-              >
-                <tree
-                  ref="tree"
-                  :height="heightTree - 100"
-                  :width="widthTree - 20"
-                  :show-parameters="showTreeParameters"
-                  :tree="tree"
-                  :nodes-to-select="nodeToSelect"
-                  @select-node="selectNodes"
-                  @hideParameters="showTreeParameters = false"
-                ></tree>
-              </v-card-gene-explore>
-            </v-col>
+        >
+          <v-card-gene-explore
+            color="blue"
+            title="Tree"
+            @showParameters="showTreeParameters = true"
+            @hide="hideTree"
+          >
+            <tree
+              ref="tree"
+              :height="heightTree - 100"
+              :width="widthTree - 20"
+              :show-parameters="showTreeParameters"
+              :tree="tree"
+              :nodes-to-select="nodeToSelect"
+              @select-node="selectNodes"
+              @hideParameters="showTreeParameters = false"
+            ></tree>
+          </v-card-gene-explore>
+        </v-col>
         <v-col
           cols="12"
           :md="nbColsAlignmentPanel"
@@ -187,9 +212,6 @@ export default {
       seqs: null,
       selectedNodeId: '',
       selectSeqIds: [],
-      /**
-       * array of objects genotypes
-       */
       tracks: [],
 
       heightTree: 400,
@@ -204,6 +226,9 @@ export default {
       showAlignmentParameters: false,
       showAlignmentOverviewParameters: false,
       showAlignmentHelp: false,
+      showColorPicker: false,
+      colorTrack: '#FF2000',
+      labelTrack: 'track',
 
       errored: false,
       loading: false,
@@ -257,11 +282,15 @@ export default {
 
       const l = endSeq - startSeq + 1
 
-      const selectedSeqs = []
+      let selectedSeqs = []
 
       for (let index = 0; index < l; index++) {
         const seq = this.seqs[index]
         selectedSeqs.push(seq)
+      }
+
+      if (selectedSeqs.length === 0) {
+        selectedSeqs = this.seqs
       }
 
       return selectedSeqs
@@ -295,7 +324,6 @@ export default {
      *  compute the overviewSelection positions
      */
     selectNodes (ids) {
-      console.log('selectNodes', ids)
       if (this.seqs != null) {
         const indices = []
         for (let index = 0; index < this.seqs.length; index++) {
@@ -304,8 +332,6 @@ export default {
             indices.push(index)
           }
         }
-
-        console.log({ indices })
 
         const min = Math.min(...indices)
         const max = Math.max(...indices)
@@ -330,7 +356,6 @@ export default {
     },
 
     resizeTree () {
-      console.log('resize tree')
       if (this.loading === false) {
         this.heightTree =
           'colTree' in this.$refs ? this.$refs.colTree.clientHeight : 400
@@ -445,6 +470,44 @@ export default {
     loadNewick (newick) {
       this.tree = newick
       this.displayTree = true
+    },
+    loadPositionFile (content) {
+      const positions = []
+
+      const lines = content.split(/[\r\n]+/)
+
+      lines.forEach((line) => {
+        const cols = line.split('\t')
+        const pos = cols[0].split('-')
+        let pos1, pos2
+        if (pos.length === 1) {
+          pos1 = Number.parseInt(pos[0])
+          pos2 = pos1
+        } else if (pos.length === 2) {
+          pos1 = Number.parseInt(pos[0])
+          pos2 = Number.parseInt(pos[1])
+        }
+
+        if (Number.isInteger(pos1) && Number.isInteger(pos2)) {
+          const pos1pos2 = [pos1, pos2]
+          positions.push(pos1pos2)
+        }
+      })
+
+      if (positions.length > 0) {
+        const track = { trackLabel: this.labelTrack }
+        track.features = []
+        const feature = {
+          positions: positions,
+          color: this.colorTrack,
+          type: 'pos'
+        }
+        track.features.push(feature)
+        this.tracks.push(track)
+      }
+    },
+    toggleColorPicker () {
+      this.showColorPicker = !this.showColorPicker
     }
   },
   /**
@@ -478,6 +541,6 @@ export default {
 }
 
 .fillHeight {
-  height:100%;
+  height: 100%;
 }
 </style>

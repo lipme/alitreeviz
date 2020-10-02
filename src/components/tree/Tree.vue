@@ -103,12 +103,10 @@ export default {
   },
   methods: {
     clickNodeFn (e, node) {
-      console.log('select ', node)
       this.$refs.phylo.deselectAll()
       this.$refs.phylo.selectNode(node)
     },
     clickOutsideFn (e, node) {
-      console.log('click outside')
       this.$refs.phylo.deselectAll()
     },
     hoverNodeFn (e, node) {

@@ -137,19 +137,6 @@ export default {
   },
   computed: {
     length () {
-      console.log(
-        this.seqs.map((s) => {
-          return s.seq ? s.seq.length : 0
-        })
-      )
-      console.log(
-        'max',
-        Math.max(
-          ...this.seqs.map((s) => {
-            return s.seq ? s.seq.length : 0
-          })
-        )
-      )
       return Math.max(
         ...this.seqs.map((s) => {
           return s.seq ? s.seq.length : 0
