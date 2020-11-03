@@ -57,6 +57,18 @@
             title="change the label of the new track"
           ></v-text-field>
         </v-row>
+        <v-row>
+          <v-col class="text-left" cols="4">
+            <v-slider
+              hint="Window size"
+              thumb-label="always"
+              label="window size"
+              max="300"
+              min="10"
+              v-model="nbPositionsDisplayed"
+            />
+          </v-col>
+        </v-row>
       </v-col>
       <v-col class="text-right" cols="4">
         <v-row justify="end">
@@ -189,8 +201,6 @@ import LoadingDialog from '@/components/generic/LoadingDialog.vue'
 
 import FileUploadField from '@/components/file/FileGetContentField'
 
-const nbPositionsDisplayed = 60
-
 const Fasta = require('biojs-io-fasta')
 
 export default {
@@ -237,16 +247,16 @@ export default {
         'Enable to load json file. Please make sure the json file is well formatted.',
       loadingmsg: 'Loading...',
 
-      nbPositionsDisplayed: nbPositionsDisplayed,
+      nbPositionsDisplayed: 60,
       overviewSelection: {
         startSeq: -1,
         endSeq: 100000000,
         startPos: 0,
-        endPos: nbPositionsDisplayed
+        endPos: this.nbPositionsDisplayed
       },
       selectionFromOverview: {
         startPos: 0,
-        endPos: nbPositionsDisplayed
+        endPos: this.nbPositionsDisplayed
       }
     }
   },
@@ -297,9 +307,9 @@ export default {
   watch: {
     lengthSequence (newValue) {
       const startPos = Math.floor(
-        (newValue - 1 - nbPositionsDisplayed / 2) / 2
+        (newValue - 1 - this.nbPositionsDisplayed / 2) / 2
       )
-      const endPos = startPos + nbPositionsDisplayed
+      const endPos = startPos + this.nbPositionsDisplayed
       if (startPos >= 0 && endPos < newValue) {
         this.selectionFromOverview = Object.assign(
           this.selectionFromOverview,
@@ -407,13 +417,13 @@ export default {
         startSeq: -1,
         endSeq: 100000000,
         startPos: 0,
-        endPos: nbPositionsDisplayed
+        endPos: this.nbPositionsDisplayed
       }
     },
     resetSelectionFromOverview () {
       this.selectionFromOverview = {
         startPos: 0,
-        endPos: nbPositionsDisplayed
+        endPos: this.nbPositionsDisplayed
       }
     },
     selectSequencesFromOverview (selection) {
