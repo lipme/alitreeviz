@@ -510,7 +510,8 @@ export default {
         const feature = {
           positions: positions,
           color: this.colorTrack,
-          type: 'pos'
+          type: 'pos',
+          'fill-opacity': 1
         }
         track.features.push(feature)
         this.tracks.push(track)
