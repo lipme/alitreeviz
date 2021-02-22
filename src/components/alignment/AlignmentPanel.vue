@@ -35,10 +35,32 @@
       </template>
     </vue-slider>
 
+    <vue-slider
+      v-if="displaySliderSequences"
+      v-model="rangeVerticalSlider"
+      :min="0"
+      :max="seqs.length - 1"
+      :min-range="nbDisplayedSequences"
+      :max-range="nbDisplayedSequences"
+      :fixed="true"
+      :use-keyboard="true"
+      direction="ttb"
+      :enable-cross="false"
+      class="verticalSlider"
+      :height="heightVerticalSlider"
+      :style="cssVars"
+      :tooltip-formatter="tooltipFormatter"
+      :tooltip-placement="['top', 'bottom']"
+    >
+      <template v-slot:dot="{ value, focus }">
+        <div :class="['vertical-custom-dot', { focus }]"></div>
+      </template>
+    </vue-slider>
+
     <svg-msa
       :start="rangeSlider[0] + 1"
       :end="rangeSlider[1] + 1"
-      :seqs="seqs"
+      :seqs="displayedSeqs"
       :tracks="tracks"
       :type="type"
       coloring="auto"
@@ -110,7 +132,21 @@ export default {
       lastDisplayedSeqIndex: 35, // not used
       selectedLeafIds: this.selectedids,
       radiobuttonDistanceColorDisabled: false,
-      rangeSliderProxy: null
+      rangeSliderProxy: null,
+      rangeVerticalSliderProxy: null,
+
+      /*
+      Number of the first sequence to display
+      */
+      startVerticalDisplay: 0,
+      /*
+      Number of sequences to display
+      */
+      nbDisplayedSequences: 20,
+      /*
+      Formatter for the tooltip of the vertical slider
+      */
+      tooltipFormatter: v => `seq ${v}`
     }
   },
   computed: {
@@ -131,6 +167,59 @@ export default {
       }
     },
     /**
+     * Range for the vertical slider
+     */
+    rangeVerticalSlider: {
+      get: function () {
+        const begin = this.startVerticalDisplay
+        let end = this.startVerticalDisplay + this.nbDisplayedSequences
+        if (end >= this.seqs.length) {
+          end = this.seqs.length - 1
+        }
+        const pos = [begin, end]
+        return this.rangeVerticalSliderProxy == null ? pos : this.rangeVerticalSliderProxy
+      },
+      set: function (newValue) {
+        this.rangeVerticalSliderProxy = newValue
+      }
+    },
+    /**
+     * Height of the vertical slider
+     */
+    heightVerticalSlider () {
+      return this.displayedSeqs.length * 15
+    },
+    /**
+     * css variables :
+     * -vslider-top : position of the vertical slider
+     */
+    cssVars () {
+      return { '--vslider-top': 115 + this.tracks.length * 20 + 'px' }
+    },
+    /**
+     * Selection of seqs to display
+     */
+    displayedSeqs () {
+      const startVerticalDisplay = this.rangeVerticalSlider[0]
+
+      const endDisplay = this.rangeVerticalSlider[1]
+
+      console.log({ startVerticalDisplay, endDisplay })
+
+      const displayedSeqs = this.seqs.slice(startVerticalDisplay, endDisplay)
+
+      console.log({ displayedSeqs })
+
+      return displayedSeqs
+    },
+    /**
+     * True if the vertical slider has to be displayed
+     */
+    displaySliderSequences () {
+      return !(this.seqs.length < this.nbDisplayedSequences)
+    },
+
+    /**
      * return an array of metadata object
      * Note that at the moment it returns just the metadata of the root node of the tree
      * TODO: search the metadata in all the tree (?)
@@ -141,6 +230,7 @@ export default {
     type () {
       return this.aaColoring ? 'aa' : 'nt'
     }
+
   },
   watch: {
     currentid (v) {
@@ -206,5 +296,19 @@ export default {
 }
 .custom-dot:hover {
   width: 100%;
+}
+
+.vertical-custom-dot {
+  width: 100%;
+  height: 50%;
+  border-radius: 0;
+  background-color: #3498db;
+  transition: all 0.1s;
+}
+
+.verticalSlider {
+  position: absolute;
+  left: -15px;
+  top: var(--vslider-top);
 }
 </style>
