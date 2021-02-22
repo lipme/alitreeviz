@@ -120,6 +120,7 @@
               :show-parameters="showTreeParameters"
               :tree="tree"
               :nodes-to-select="nodeToSelect"
+              @ready="sortSequences"
               @select-node="selectNodes"
               @hideParameters="showTreeParameters = false"
             ></tree>
@@ -519,6 +520,11 @@ export default {
     },
     toggleColorPicker () {
       this.showColorPicker = !this.showColorPicker
+    },
+    sortSequences (order) {
+      this.seqs = this.seqs.sort((a, b) => {
+        return order[a.name] - order[b.name]
+      })
     }
   },
   /**

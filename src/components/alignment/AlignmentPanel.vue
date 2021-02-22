@@ -204,11 +204,7 @@ export default {
 
       const endDisplay = this.rangeVerticalSlider[1]
 
-      console.log({ startVerticalDisplay, endDisplay })
-
       const displayedSeqs = this.seqs.slice(startVerticalDisplay, endDisplay)
-
-      console.log({ displayedSeqs })
 
       return displayedSeqs
     },

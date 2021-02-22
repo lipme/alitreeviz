@@ -101,6 +101,19 @@ export default {
       nodeInfo: null
     }
   },
+  computed: {
+    orderSequences () {
+      // return this.$refs.phylo.d3Leaves.map(l => l.data.name)
+      const order = {}
+
+      this.$refs.phylo.d3RootNode.leaves().forEach((l, i) => { order[l.data.name] = i })
+
+      return order
+    }
+  },
+  mounted () {
+    this.$emit('ready', this.orderSequences)
+  },
   methods: {
     clickNodeFn (e, node) {
       this.$refs.phylo.deselectAll()
