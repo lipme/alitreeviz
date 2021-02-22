@@ -142,7 +142,7 @@ export default {
       /*
       Number of sequences to display
       */
-      nbDisplayedSequences: 20,
+      nbDisplayedSequences: 50,
       /*
       Formatter for the tooltip of the vertical slider
       */
