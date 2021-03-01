@@ -1,5 +1,19 @@
 # alitreeviz
 
+Be careful, this a very preliminary version that could contain bugs.
+
+Visualisation of multiple sequence alignments and phylogenetic trees.
+
+## Features
+
+- Does not need any server
+- Display phylogenetic tree (newick format)
+- Display multiple sequence alignment (MSA) (multifasta format)
+- Display MSA overview
+- Select sequences in the MSA from the phylogenetic tree (the names of the sequences must correspond)
+- Display position tracks above the MSA overview and detailed view (text file with one position per row)
+
+
 ## Project setup
 ```
 npm install
@@ -15,20 +29,4 @@ npm run serve
 npm run build
 ```
 
-### Run your unit tests
-```
-npm run test:unit
-```
 
-### Run your end-to-end tests
-```
-npm run test:e2e
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).

@@ -1,3 +1,13 @@
+// Copyright 2021 [LIPM]
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.apache.org/licenses/LICENSE-2.0
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+//    limitations under the License.
 <template
   >
   <div class="fillHeight">
@@ -93,6 +103,16 @@
             :show="!displayOverview"
             @click="showOverview"
           ></panel-button>
+          <v-btn
+            color="red"
+            title="Reset All"
+            dark
+            fab
+            class="mr-5"
+            @click="reset"
+            >
+            Reset
+          </v-btn>
         </v-row>
       </v-col>
     </v-row>
@@ -120,7 +140,7 @@
               :show-parameters="showTreeParameters"
               :tree="tree"
               :nodes-to-select="nodeToSelect"
-              @ready="sortSequences"
+              @ready="setSequenceOrder"
               @select-node="selectNodes"
               @hideParameters="showTreeParameters = false"
             ></tree>
@@ -260,7 +280,8 @@ export default {
       selectionFromOverview: {
         startPos: 0,
         endPos: NBPOSITIONS
-      }
+      },
+      orderSequences: null
     }
   },
 
@@ -304,6 +325,12 @@ export default {
         selectedSeqs = this.seqs
       }
 
+      if (this.orderSequences != null) {
+        selectedSeqs = selectedSeqs.sort((a, b) => {
+          return this.orderSequences[a.name] - this.orderSequences[b.name]
+        })
+      }
+
       return selectedSeqs
     }
   },
@@ -326,6 +353,7 @@ export default {
         )
       }
     }
+
   },
 
   methods: {
@@ -336,12 +364,16 @@ export default {
      */
     selectNodes (ids) {
       if (this.seqs != null) {
-        const indices = []
+        let indices = []
         for (let index = 0; index < this.seqs.length; index++) {
           const seq = this.seqs[index]
           if (ids.includes(seq.name)) {
             indices.push(index)
           }
+        }
+
+        if (indices.length === 0) {
+          indices = [0, this.seqs.length - 1]
         }
 
         const min = Math.min(...indices)
@@ -353,17 +385,6 @@ export default {
       }
 
       Vue.nextTick()
-    },
-    /**
-     * Reset all the views
-     */
-    reset () {
-      this.loadLocus()
-      this.displayOverview = true
-      this.displayAln = true
-      this.displayTree = true
-      this.displayStats = false
-      this.selectedGenotypes = []
     },
 
     resizeTree () {
@@ -466,19 +487,19 @@ export default {
         endPos: pos[1]
       })
     },
-    selectGenotypes (selectedgenotypes) {
-      this.selectedGenotypes = selectedgenotypes
-    },
     displayError (msg) {
       this.errored = true
       this.errormsg = msg
     },
     loadFasta (multifasta) {
       this.seqs = Fasta.parse(multifasta)
+      this.sortSequences()
       this.displayAln = true
       this.displayOverview = true
     },
     loadNewick (newick) {
+      this.selectNodes([])
+      this.tree = null
       this.tree = newick
       this.displayTree = true
     },
@@ -521,10 +542,25 @@ export default {
     toggleColorPicker () {
       this.showColorPicker = !this.showColorPicker
     },
-    sortSequences (order) {
-      this.seqs = this.seqs.sort((a, b) => {
-        return order[a.name] - order[b.name]
-      })
+    setSequenceOrder (order) {
+      this.orderSequences = order
+      this.sortSequences()
+    },
+    sortSequences () {
+      if (this.orderSequences != null && this.seqs != null) {
+        this.seqs = this.seqs.sort((a, b) => {
+          return this.orderSequences[a.name] - this.orderSequences[b.name]
+        })
+      }
+    },
+    reset () {
+      this.tree = null
+      this.seqs = null
+      this.tracks = []
+      this.displayError = false
+      this.orderSequences = null
+      this.resetOverviewSelection()
+      this.resetSelectionFromOverview()
     }
   },
   /**

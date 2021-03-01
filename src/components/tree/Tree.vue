@@ -1,3 +1,13 @@
+// Copyright 2021 [LIPM]
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// http://www.apache.org/licenses/LICENSE-2.0
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+//    limitations under the License.
 <template>
   <div id="tree">
     <v-dialog v-model="displayParameters" hide-overlay width="400px">
@@ -19,22 +29,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <vue-phylogram
-      ref="phylo"
-      :newick="tree"
-      :height="height"
-      :width="width"
-      :branch-lengths="showPhylogram"
-      :align-labels="alignLabels"
-      :selected="nodesToSelect.join(',')"
-      :display-leaves="false"
-      @click-node="clickNodeFn"
-      @click-outside="clickOutsideFn"
-      @select-nodes="selectNodes"
-      @hover-node="hoverNodeFn"
-      @hover-label="hoverNodeFn"
-    >
-    </vue-phylogram>
     <v-btn x-small dark fab bottom left color="green" @click="zoomIn">
       <v-icon>mdi-plus</v-icon>
     </v-btn>
@@ -56,11 +50,28 @@
     <v-btn x-small dark fab bottom left color="blue" @click="reset">
       <v-icon>mdi-reload</v-icon>
     </v-btn>
-    <div v-if="nodeInfo != null" class="node-info font-weight-light caption">
+    <div v-if="nodeInfo != null" class="font-weight-light caption">
       <p>
         {{ nodeInfo.name }}
       </p>
     </div>
+    <vue-phylogram
+      ref="phylo"
+      :newick="tree"
+      :height="height"
+      :width="width"
+      :branch-lengths="showPhylogram"
+      :align-labels="alignLabels"
+      :selected="nodesToSelect.join(',')"
+      :display-leaves="false"
+      @click-node="clickNodeFn"
+      @click-outside="clickOutsideFn"
+      @select-nodes="selectNodes"
+      @hover-node="hoverNodeFn"
+      @hover-label="hoverNodeFn"
+    >
+    </vue-phylogram>
+
   </div>
 </template>
 
