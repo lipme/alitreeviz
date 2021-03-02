@@ -46,7 +46,9 @@
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "build-npm": "vue-cli-service build --target lib --name vue-phylogram ./src/components/index.js",
+    "publish-npm": "npm publish --access public"
   },
   "dependencies": {
     "biojs-io-fasta": "^0.1.17",
