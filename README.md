@@ -1,8 +1,10 @@
 # alitreeviz
 
-Be careful, this a very preliminary version that could contain bugs.
+**Be careful, this a very preliminary version that could contain bugs.**
 
 Visualisation of multiple sequence alignments and phylogenetic trees.
+
+![Screenshot](https://raw.githubusercontent.com/lipme/alitreeviz/master/public/images/screenshot.png)
 
 ## Features
 
