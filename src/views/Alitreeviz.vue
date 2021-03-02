@@ -227,6 +227,7 @@ const Fasta = require('biojs-io-fasta')
 const NBPOSITIONS = 160
 
 export default {
+  name: 'alitreeviz',
   directives: {
     resize
   },

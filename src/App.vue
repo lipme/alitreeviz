@@ -41,19 +41,19 @@
     </v-app-bar>
 
     <v-main>
-      <Explore />
+      <alitreeviz />
     </v-main>
   </v-app>
 </template>
 
 <script>
-import Explore from './views/Explore.vue'
+import Alitreeviz from './views/Alitreeviz.vue'
 
 export default {
   name: 'App',
 
   components: {
-    Explore
+    Alitreeviz
   },
 
   data: () => ({

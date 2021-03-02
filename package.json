@@ -47,7 +47,7 @@
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint",
-    "build-npm": "vue-cli-service build --target lib --name vue-phylogram ./src/components/index.js",
+    "build-npm": "vue-cli-service build --dest dist --target lib --name alitreeviz ./src/index.js",
     "publish-npm": "npm publish --access public"
   },
   "dependencies": {
