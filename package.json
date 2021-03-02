@@ -1,7 +1,46 @@
 {
   "name": "alitreeviz",
+  "description": "Visualisation of multiple sequence alignments and phylogentic trees",
   "version": "0.1.0",
   "private": false,
+  "keywords": [
+    "bioinformatics",
+    "vue",
+    "alignment",
+    "sequence",
+    "phylogeny"
+  ],
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Ludovic Cottret",
+    "email": "ludovic.cottret@inrae.fr"
+  },
+  "contributors": [
+    {
+      "name": "Erika Sallet",
+      "email": "erika.sallet@inrae.fr"
+    },
+    {
+      "name": "Jérôme Gouzy",
+      "email": "jerome.gouzy@inrae.fr"
+    },
+    {
+      "name": "Sébastien Carrere",
+      "email": "sebastien.carrere@inrae.fr"
+    },
+    {
+      "name": "Ludovic Legrand",
+      "email": "ludovic.legrand@inrae.fr"
+    }
+  ],
+  "bugs": {
+    "email": "ludovic.cottret@inrae.fr"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lipme/alitreeviz.git"
+  },
+  "main": "./dist/alitreeviz.common.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -46,5 +85,8 @@
     "vue-cli-plugin-vuetify": "~2.0.5",
     "vue-template-compiler": "^2.6.11",
     "vuetify-loader": "^1.3.0"
-  }
+  }, 
+  "files": [
+    "dist/*"
+  ]
 }
