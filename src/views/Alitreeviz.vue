@@ -11,12 +11,6 @@
 <template
   >
   <div class="container main">
-    <!-- dialog visible during the page loading -->
-    <loading-dialog
-      :loading="loading"
-      :loadingmsg="loadingmsg"
-    ></loading-dialog>
-
     <v-alert
       v-model="errored"
       type="error"
@@ -126,7 +120,7 @@
        </div>
     </div>
 
-    <div class="columns" v-if="!loading && !errored">
+    <div class="columns" v-if="!errored">
         <div :class="classColTree"  ref="colTree"
           v-resize="resizeTree" v-show="displayTree"
           v-if="tree != null" style="height:90vh;">
@@ -195,7 +189,6 @@ import OverviewPanel from '@/components/overview/OverviewPanel.vue'
 import Tree from '@/components/tree/Tree.vue'
 import AlignmentPanel from '@/components/alignment/AlignmentPanel.vue'
 import PanelButton from '@/components/generic/buttons/PanelButton.vue'
-import LoadingDialog from '@/components/generic/LoadingDialog.vue'
 
 import FileUploadField from '@/components/file/FileGetContentField'
 
@@ -212,7 +205,6 @@ export default {
     Tree,
     AlignmentPanel,
     OverviewPanel,
-    LoadingDialog,
     PanelButton,
     FileUploadField
   },
@@ -241,11 +233,9 @@ export default {
       labelTrack: 'track',
 
       errored: false,
-      loading: false,
 
       errormsg:
         'Enable to load json file. Please make sure the json file is well formatted.',
-      loadingmsg: 'Loading...',
 
       nbPositionsDisplayed: NBPOSITIONS,
       overviewSelection: {
@@ -393,20 +383,16 @@ export default {
     },
 
     resizeTree () {
-      if (this.loading === false) {
-        this.heightTree =
+      this.heightTree =
           'colTree' in this.$refs ? this.$refs.colTree.clientHeight : 400
-        this.widthTree =
+      this.widthTree =
           'colTree' in this.$refs ? this.$refs.colTree.clientWidth : 600
-      }
     },
     resizeOverview () {
-      if (this.loading === false) {
-        this.widthOverview =
+      this.widthOverview =
           'colOverview' in this.$refs
             ? this.$refs.colOverview.clientWidth - 50
             : 600
-      }
     },
     showTree () {
       this.displayTree = true
