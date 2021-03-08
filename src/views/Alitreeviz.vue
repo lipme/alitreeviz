@@ -28,6 +28,16 @@
       {{ errormsg }}
     </v-alert>
 
+    <v-alert
+      v-if="errorConsistency"
+      type="warning"
+      dark
+      width="500px"
+      dismissible
+    >
+      Warning : The tree and the MSA are not consistent (not the same id), strange behaviours can appear !
+    </v-alert>
+
     <v-row v-if="!errored" dense justify="space-between" class="mt-3 ml-3">
       <v-col class="text-left" cols="8">
         <v-row justify="start">
@@ -333,6 +343,27 @@ export default {
       }
 
       return selectedSeqs
+    },
+    /**
+     * ids of the sequences
+     */
+    sequenceIds () {
+      return this.seqs === null ? [] : this.seqs.map(s => s.name)
+    },
+    /**
+     * ids of the leaves of thre tree
+     */
+    leaveIds () {
+      return this.orderSequences === null ? [] : Object.keys(this.orderSequences)
+    },
+    /**
+     * Check consistency between sequence ids and tree leave ids
+     */
+    errorConsistency () {
+      if (this.sequenceIds.length > 0 && this.leaveIds.length > 0) {
+        return !this.sequenceIds.every(s => this.leaveIds.includes(s))
+      }
+      return false
     }
   },
   watch: {
@@ -563,6 +594,7 @@ export default {
       this.resetOverviewSelection()
       this.resetSelectionFromOverview()
     }
+
   },
   /**
    * Generic behaviour if an error is captured
