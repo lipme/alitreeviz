@@ -41,6 +41,9 @@ export const displayParameters = {
   methods: {
     closeParameters () {
       this.displayParameters = false
+    },
+    toggleParameters () {
+      this.displayParameters = !this.displayParameters
     }
   }
 }

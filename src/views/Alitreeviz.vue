@@ -170,14 +170,9 @@
                   ></overview-panel>
                 </div>
               </v-card-gene-explore>
-              <v-card-gene-explore
-                v-show="displayAln"
-                color="#006400"
-                title="Alignment Details"
-                @showParameters="showAlignmentParameters = true"
-                @hide="hideAln"
-              >
+
                 <alignment-panel
+                  v-show="displayAln"
                   :max-pos="nbPositionsDisplayed"
                   :start="selectionFromOverview.startPos"
                   :end="selectionFromOverview.endPos"
@@ -191,8 +186,8 @@
                   @hideParameters="showAlignmentParameters = false"
                   @select-node="selectNodes"
                   @extract="setSelectionFromAlignment"
+                  @hide-aln="hideAln"
                 ></alignment-panel>
-              </v-card-gene-explore>
           </div>
         </div>
   </div>
@@ -333,20 +328,22 @@ export default {
      * ids of the sequences
      */
     sequenceIds () {
-      return this.seqs === null ? [] : this.seqs.map(s => s.name)
+      return this.seqs === null ? [] : this.seqs.map((s) => s.name)
     },
     /**
      * ids of the leaves of thre tree
      */
     leaveIds () {
-      return this.orderSequences === null ? [] : Object.keys(this.orderSequences)
+      return this.orderSequences === null
+        ? []
+        : Object.keys(this.orderSequences)
     },
     /**
      * Check consistency between sequence ids and tree leave ids
      */
     errorConsistency () {
       if (this.sequenceIds.length > 0 && this.leaveIds.length > 0) {
-        return !this.sequenceIds.every(s => this.leaveIds.includes(s))
+        return !this.sequenceIds.every((s) => this.leaveIds.includes(s))
       }
       return false
     }
@@ -370,7 +367,6 @@ export default {
         )
       }
     }
-
   },
 
   methods: {
@@ -579,7 +575,6 @@ export default {
       this.resetOverviewSelection()
       this.resetSelectionFromOverview()
     }
-
   },
   /**
    * Generic behaviour if an error is captured
@@ -616,6 +611,6 @@ export default {
 }
 
 .main {
-  margin:10px;
+  margin: 10px;
 }
 </style>

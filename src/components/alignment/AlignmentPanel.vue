@@ -11,71 +11,80 @@
 <template>
   <div>
     <!-- Dialog to change parameters -->
-    <v-dialog v-model="displayParameters" hide-overlay width="600px">
-      <v-card>
-        <v-card-title>Multiple Alignment Layout</v-card-title>
-        <v-card-text>
-          <v-switch
-            v-model="aaColoring"
-            label="on: amino acid coloring, off: nucleotide coloring"
-          ></v-switch>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="closeParameters()">
-            Close
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-     <vue-slider
-      v-if="maxPos < maxLengthSeqs"
-      v-model="rangeSlider"
-      :max="maxLengthSeqs"
-      :min="0"
-      :min-range="maxPos"
-      :max-range="maxPos"
-      :fixed="true"
-      :use-keyboard="true"
-      @change="moveSlider"
+     <div :class="classModal">
+      <div class="modal-background" @click="closeParameters"></div>
+      <div class="modal-content">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-title">
+              Multiple Alignment Layout
+            </div>
+          </div>
+          <div class="card-content">
+            <label class="checkbox">
+              <input type="checkbox" v-model="aaColoring">
+              on: amino acid coloring, off: nucleotide coloring
+            </label>
+          </div>
+        </div>
+      </div>
+      <button @click="closeParameters" class="modal-close is-large" aria-label="close"></button>
+    </div>
+    <v-card-gene-explore
+      color="#006400"
+      title="Alignment Details"
+      @hide="hideAlignment"
+      @show-parameters="toggleParameters"
     >
-      <template v-slot:dot="{ value, focus }">
-        <div :class="['custom-dot', { focus }]"></div>
-      </template>
-    </vue-slider>
 
-    <vue-slider
-      v-if="displaySliderSequences"
-      v-model="rangeVerticalSlider"
-      :min="0"
-      :max="seqs.length - 1"
-      :min-range="nbDisplayedSequences"
-      :max-range="nbDisplayedSequences"
-      :fixed="true"
-      :use-keyboard="true"
-      direction="ttb"
-      :enable-cross="false"
-      class="verticalSlider"
-      :height="heightVerticalSlider"
-      :style="cssVars"
-      :tooltip-formatter="tooltipFormatter"
-      :tooltip-placement="['top', 'bottom']"
-    >
-      <template v-slot:dot="{ value, focus }">
-        <div :class="['vertical-custom-dot', { focus }]"></div>
-      </template>
-    </vue-slider>
+      <vue-slider
+        v-if="maxPos < maxLengthSeqs"
+        v-model="rangeSlider"
+        :max="maxLengthSeqs"
+        :min="0"
+        :min-range="maxPos"
+        :max-range="maxPos"
+        :fixed="true"
+        :use-keyboard="true"
+        @change="moveSlider"
+      >
+        <template v-slot:dot="{ value, focus }">
+          <div :class="['custom-dot', { focus }]"></div>
+        </template>
+      </vue-slider>
 
-    <svg-msa
-      :start="rangeSlider[0] + 1"
-      :end="rangeSlider[1] + 1"
-      :seqs="displayedSeqs"
-      :tracks="tracks"
-      :type="type"
-      coloring="auto"
-      v-on="$listeners"
-    ></svg-msa>
+      <vue-slider
+        v-if="displaySliderSequences"
+        v-model="rangeVerticalSlider"
+        :min="0"
+        :max="seqs.length - 1"
+        :min-range="nbDisplayedSequences"
+        :max-range="nbDisplayedSequences"
+        :fixed="true"
+        :use-keyboard="true"
+        direction="ttb"
+        :enable-cross="false"
+        class="verticalSlider"
+        :height="heightVerticalSlider"
+        :style="cssVars"
+        :tooltip-formatter="tooltipFormatter"
+        :tooltip-placement="['top', 'bottom']"
+      >
+        <template v-slot:dot="{ value, focus }">
+          <div :class="['vertical-custom-dot', { focus }]"></div>
+        </template>
+      </vue-slider>
+
+      <svg-msa
+        :start="rangeSlider[0] + 1"
+        :end="rangeSlider[1] + 1"
+        :seqs="displayedSeqs"
+        :tracks="tracks"
+        :type="type"
+        coloring="auto"
+        v-on="$listeners"
+      ></svg-msa>
+    </v-card-gene-explore>
   </div>
 </template>
 
@@ -88,10 +97,13 @@ import 'vue-slider-component/theme/default.css'
 import { SvgMsa } from 'vue-svg-msa'
 import 'vue-svg-msa/dist/vue-svg-msa.css'
 
+import VCardGeneExplore from '@/components/generic/VCardGeneExplore.vue'
+
 export default {
   components: {
     SvgMsa,
-    VueSlider
+    VueSlider,
+    VCardGeneExplore
   },
   // import :
   // showParameters props
@@ -235,6 +247,9 @@ export default {
     },
     type () {
       return this.aaColoring ? 'aa' : 'nt'
+    },
+    classModal () {
+      return this.displayParameters ? ' modal is-active' : 'modal'
     }
 
   },
@@ -279,6 +294,9 @@ export default {
     },
     moveSlider (pos) {
       this.$emit('extract', pos)
+    },
+    hideAlignment () {
+      this.$emit('hide-aln')
     }
   }
 }

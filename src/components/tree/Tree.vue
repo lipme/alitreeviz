@@ -29,26 +29,6 @@
       </div>
       <button @click="displayParameters = false" class="modal-close is-large" aria-label="close"></button>
     </div>
-    <!-- <v-dialog v-model="displayParameters" hide-overlay width="400px">
-      <v-card>
-        <v-card-title>Layout parameters</v-card-title>
-        <v-card-text>
-          <v-switch
-            v-model="showPhylogram"
-            dense
-            label="display cladogram instead of phylogram"
-          ></v-switch>
-          <v-switch v-model="alignLabels" dense label="Align labels"></v-switch>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="displayParameters = false">
-            Close
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog> -->
-
     <v-card-gene-explore
       color="blue"
       title="Tree"
@@ -201,10 +181,6 @@ export default {
     },
     deselectAll () {
       this.$refs.phylo.deselectAll()
-    },
-    toggleParameters () {
-      console.log('display PArameters')
-      this.displayParameters = !this.displayParameters
     }
   }
 }
