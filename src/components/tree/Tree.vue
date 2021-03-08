@@ -125,6 +125,9 @@ export default {
   mounted () {
     this.$emit('ready', this.orderSequences)
   },
+  updated () {
+    this.$emit('ready', this.orderSequences)
+  },
   methods: {
     clickNodeFn (e, node) {
       this.$refs.phylo.deselectAll()
