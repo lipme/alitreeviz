@@ -146,6 +146,7 @@
               @ready="setSequenceOrder"
               @select-node="selectNodes"
               @hideParameters="showTreeParameters = false"
+              @hide-tree="hideTree"
             ></tree>
           <!-- </v-card-gene-explore> -->
         </div>
