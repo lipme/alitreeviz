@@ -114,16 +114,15 @@
           ></panel-button>
        </div>
        <div class="column is-narrow">
-         <v-btn
+         <panel-button
             color="red"
-            title="Reset All"
-            dark
-            fab
-            class="mr-5"
+            label="Reset"
+
+            title="Reset all"
+            show
             @click="reset"
             >
-            Reset
-          </v-btn>
+         </panel-button>
        </div>
     </div>
 
@@ -131,12 +130,12 @@
         <div :class="classColTree"  ref="colTree"
           v-resize="resizeTree" v-show="displayTree"
           v-if="tree != null" style="min-height: 600px; max-height: 800px">
-          <v-card-gene-explore
-            color="blue"
+          <!-- <v-card-gene-explore
+            color="midnightblue"
             title="Tree"
             @showParameters="showTreeParameters = true"
             @hide="hideTree"
-          >
+          > -->
             <tree
               ref="tree"
               :height="heightTree - 100"
@@ -148,7 +147,7 @@
               @select-node="selectNodes"
               @hideParameters="showTreeParameters = false"
             ></tree>
-          </v-card-gene-explore>
+          <!-- </v-card-gene-explore> -->
         </div>
 
         <div v-resize="resizeOverview" :class="classColAln"  ref="colOverview" v-show="displayOverview || displayAln" v-if="seqs != null">

@@ -10,7 +10,26 @@
 //    limitations under the License.
 <template>
   <div id="tree">
-    <v-dialog v-model="displayParameters" hide-overlay width="400px">
+    <div :class="classModal">
+      <div class="modal-background" @click="displayParameters = false"></div>
+      <div class="modal-content">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-title">
+              Layout parameters
+            </div>
+          </div>
+          <div class="card-content">
+            <label class="checkbox">
+              <input type="checkbox" v-model="showPhylogram">
+              display cladogram instead of phylogram
+            </label>
+          </div>
+        </div>
+      </div>
+      <button @click="displayParameters = false" class="modal-close is-large" aria-label="close"></button>
+    </div>
+    <!-- <v-dialog v-model="displayParameters" hide-overlay width="400px">
       <v-card>
         <v-card-title>Layout parameters</v-card-title>
         <v-card-text>
@@ -28,28 +47,24 @@
           </v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
-    <v-btn x-small dark fab bottom left color="green" @click="zoomIn">
-      <v-icon>mdi-plus</v-icon>
-    </v-btn>
-    <v-btn x-small dark fab bottom left color="red" @click="zoomOut">
-      <v-icon>mdi-minus</v-icon>
-    </v-btn>
-    <v-btn x-small dark fab bottom left color="purple" @click="left">
-      <v-icon>keyboard_arrow_left</v-icon>
-    </v-btn>
-    <v-btn x-small dark fab bottom left color="purple" @click="right">
-      <v-icon>keyboard_arrow_right</v-icon>
-    </v-btn>
-    <v-btn x-small dark fab bottom left color="purple" @click="up">
-      <v-icon>keyboard_arrow_up</v-icon>
-    </v-btn>
-    <v-btn x-small dark fab bottom left color="purple" @click="down">
-      <v-icon>keyboard_arrow_down</v-icon>
-    </v-btn>
-    <v-btn x-small dark fab bottom left color="blue" @click="reset">
-      <v-icon>mdi-reload</v-icon>
-    </v-btn>
+    </v-dialog> -->
+
+    <v-card-gene-explore
+      color="blue"
+      title="Tree"
+      :other-buttons="otherButtons"
+      @hide="hideTree"
+      @show-parameters="toggleParameters"
+      @zoom-in="zoomIn"
+      @zoom-out="zoomOut"
+      @left="left"
+      @right="right"
+      @up="up"
+      @down="down"
+      @reset="reset"
+      @deselectAll="deselectAll"
+    >
+
     <div v-if="nodeInfo != null" class="font-weight-light caption">
       <p>
         {{ nodeInfo.name }}
@@ -71,7 +86,7 @@
       @hover-label="hoverNodeFn"
     >
     </vue-phylogram>
-
+    </v-card-gene-explore>
   </div>
 </template>
 
@@ -80,9 +95,11 @@ import { VuePhylogram } from 'vue-phylogram'
 
 import { displayParameters } from '@/mixins/displayParameters.js'
 
+import VCardGeneExplore from '@/components/generic/VCardGeneExplore.vue'
+
 export default {
   components: {
-    VuePhylogram
+    VuePhylogram, VCardGeneExplore
   },
   mixins: [displayParameters],
   props: {
@@ -104,12 +121,23 @@ export default {
       type: Number,
       default: 600
     }
+
   },
   data () {
     return {
       showPhylogram: true,
       alignLabels: true,
-      nodeInfo: null
+      nodeInfo: null,
+      otherButtons: [
+        { icon: 'mdi-magnify-plus', event: 'zoom-in', tooltip: 'zoom in' },
+        { icon: 'mdi-magnify-minus', event: 'zoom-out', tooltip: 'zoom out' },
+        { icon: 'mdi-arrow-left', event: 'left', tooltip: 'left' },
+        { icon: 'mdi-arrow-right', event: 'right', tooltip: 'right' },
+        { icon: 'mdi-arrow-up', event: 'up', tooltip: 'up' },
+        { icon: 'mdi-arrow-down', event: 'down', tooltip: 'down' },
+        { icon: 'mdi-code-brackets', event: 'reset', tooltip: '[1:1]' },
+        { icon: 'mdi-close-outline', event: 'deselectAll', tooltip: 'deselect all' }
+      ]
     }
   },
   computed: {
@@ -117,9 +145,14 @@ export default {
       // return this.$refs.phylo.d3Leaves.map(l => l.data.name)
       const order = {}
 
-      this.$refs.phylo.d3RootNode.leaves().forEach((l, i) => { order[l.data.name] = i })
+      this.$refs.phylo.d3RootNode.leaves().forEach((l, i) => {
+        order[l.data.name] = i
+      })
 
       return order
+    },
+    classModal () {
+      return this.displayParameters ? ' modal is-active' : 'modal'
     }
   },
   mounted () {
@@ -162,6 +195,16 @@ export default {
     },
     reset () {
       this.$refs.phylo.reset()
+    },
+    hideTree () {
+      this.$emit('hide-tree')
+    },
+    deselectAll () {
+      this.$refs.phylo.deselectAll()
+    },
+    toggleParameters () {
+      console.log('display PArameters')
+      this.displayParameters = !this.displayParameters
     }
   }
 }
@@ -178,31 +221,16 @@ export default {
 </style>
 
 <style scoped>
-.v-label {
-  font-size: 12px;
-}
+
 .title text {
   display: none;
 }
 
-.v-btn {
-  margin: 5px;
-}
-
-.node-info {
-  position: absolute;
-  width: auto;
-  height: auto;
-  max-width: 50%;
-  left: 10px;
-  bottom: 50px;
-  background-color: transparent;
-  border: 1px solid purple;
-  border-radius: 10px;
-  padding: 10px 3px 0px 3px;
-}
-
 .list-info {
   list-style: none inside;
+}
+
+.caption {
+  margin: 5px;
 }
 </style>
