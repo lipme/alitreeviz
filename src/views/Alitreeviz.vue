@@ -10,7 +10,7 @@
 //    limitations under the License.
 <template
   >
-  <div class="fillHeight">
+  <div class="container main">
     <!-- dialog visible during the page loading -->
     <loading-dialog
       :loading="loading"
@@ -38,37 +38,46 @@
       Warning : The tree and the MSA are not consistent (not the same id), strange behaviours can appear !
     </v-alert>
 
-    <v-row v-if="!errored" dense justify="space-between" class="mt-3 ml-3">
-      <v-col class="text-left" cols="8">
-        <v-row justify="start">
-          <file-upload-field
+    <div class="columns">
+      <div class="column is-narrow">
+        <file-upload-field
             label
             button-label="Load Multifasta alignment file"
             @load="loadFasta"
           ></file-upload-field>
-          <file-upload-field
+      </div>
+      <div class="column is-narrow">
+         <file-upload-field
             label
             button-label="Load newick file"
             @load="loadNewick"
           ></file-upload-field>
-          <file-upload-field
+      </div>
+      <div class="column is-narrow">
+        <file-upload-field
             label
             button-label="Load new position file"
             @load="loadPositionFile"
             title="Load a position file. The first column must contain single positions or ranges, i.e 2 positions separated by '-' (e.g 100-110)"
           ></file-upload-field>
-          <panel-button
+      </div>
+      <div class="column is-narrow">
+         <panel-button
             label=""
             :color="colorTrack"
             :show="true"
             title="Click to change color of the new track"
             @click="toggleColorPicker"
           ></panel-button>
-          <v-color-picker
+      </div>
+      <div class="column is-narrow">
+         <v-color-picker
             v-show="showColorPicker"
             dot-size="25"
             v-model="colorTrack"
           ></v-color-picker>
+      </div>
+      <div class="column is-narrow">
           <v-text-field
             single-line
             v-model="labelTrack"
@@ -76,44 +85,36 @@
             style="max-width: 100px"
             title="change the label of the new track"
           ></v-text-field>
-        </v-row>
-        <!-- <v-row>
-          <v-col class="text-left" cols="4">
-            <v-slider
-              hint="Window size"
-              thumb-label="always"
-              label="window size"
-              max="300"
-              min="10"
-              v-model="nbPositionsDisplayed"
-            />
-          </v-col>
-        </v-row> -->
-      </v-col>
-      <v-col class="text-right" cols="4">
-        <v-row justify="end">
-          <panel-button
+      </div>
+      <div class="column is-narrow">
+        <panel-button
             label="T"
             color="blue"
             title="Display Tree"
             :show="!displayTree"
             @click="showTree"
           ></panel-button>
-          <panel-button
+      </div>
+       <div class="column is-narrow">
+         <panel-button
             label="A"
             color="#006400"
             title="Display Alignment"
             :show="!displayAln"
             @click="showAln"
           ></panel-button>
-          <panel-button
+       </div>
+       <div class="column is-narrow">
+         <panel-button
             label="O"
             color="orange"
             title="Display Alignment Overview"
             :show="!displayOverview"
             @click="showOverview"
           ></panel-button>
-          <v-btn
+       </div>
+       <div class="column is-narrow">
+         <v-btn
             color="red"
             title="Reset All"
             dark
@@ -123,20 +124,13 @@
             >
             Reset
           </v-btn>
-        </v-row>
-      </v-col>
-    </v-row>
-    <v-container v-if="!loading && !errored" fluid class="align-stretch">
-      <v-row no-gutters>
-        <v-col
-          ref="colTree"
-          v-resize="resizeTree"
-          style="min-height: 600px; max-height: 800px"
-          cols="12"
-          :md="nbColsTreePanel"
-          v-show="displayTree"
-          v-if="tree != null"
-        >
+       </div>
+    </div>
+
+    <div class="columns" v-if="!loading && !errored">
+        <div :class="classColTree"  ref="colTree"
+          v-resize="resizeTree" v-show="displayTree"
+          v-if="tree != null" style="min-height: 600px; max-height: 800px">
           <v-card-gene-explore
             color="blue"
             title="Tree"
@@ -155,26 +149,17 @@
               @hideParameters="showTreeParameters = false"
             ></tree>
           </v-card-gene-explore>
-        </v-col>
-        <v-col
-          cols="12"
-          :md="nbColsAlignmentPanel"
-          v-show="displayOverview || displayAln"
-          v-if="seqs != null"
-        >
-          <v-row justify="space-between" no-gutters>
-            <v-col
-              ref="colOverview"
-              v-resize="resizeOverview"
-              v-show="displayOverview"
-            >
+        </div>
+
+        <div v-resize="resizeOverview" :class="classColAln"  ref="colOverview" v-show="displayOverview || displayAln" v-if="seqs != null">
               <v-card-gene-explore
+                v-show="displayOverview"
                 color="orange"
                 title="Alignment Overview"
                 @showParameters="showAlignmentOverviewParameters = true"
                 @hide="hideOverview"
               >
-                <v-container class="overviewContainer">
+                <div class="container overviewContainer">
                   <overview-panel
                     :show-parameters="showAlignmentOverviewParameters"
                     :seqs="seqs"
@@ -183,13 +168,10 @@
                     :tracks="tracks"
                     @hideParameters="showAlignmentOverviewParameters = false"
                   ></overview-panel>
-                </v-container>
+                </div>
               </v-card-gene-explore>
-            </v-col>
-          </v-row>
-          <v-row no-gutters>
-            <v-col v-show="displayAln">
               <v-card-gene-explore
+                v-show="displayAln"
                 color="#006400"
                 title="Alignment Details"
                 @showParameters="showAlignmentParameters = true"
@@ -211,11 +193,8 @@
                   @extract="setSelectionFromAlignment"
                 ></alignment-panel>
               </v-card-gene-explore>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
-    </v-container>
+          </div>
+        </div>
   </div>
 </template>
 
@@ -297,6 +276,12 @@ export default {
   },
 
   computed: {
+    classColTree () {
+      return this.seqs === null ? 'column is-full' : 'column is-one-third'
+    },
+    classColAln () {
+      return this.tree === null ? 'column is-full' : 'column is-two-third'
+    },
     lengthSequence () {
       if (this.seqs != null && this.seqs.length > 0) {
         return this.seqs[0].seq.length
@@ -628,5 +613,9 @@ export default {
 
 .fillHeight {
   height: 100%;
+}
+
+.main {
+  margin:10px;
 }
 </style>
