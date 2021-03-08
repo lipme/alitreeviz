@@ -51,21 +51,23 @@
       @hide="hideAlignment"
       @show-parameters="toggleParameters"
     >
-    <msa-overview
-      :display-letters-mask="!displayMetadata"
-      :display-metadata-mask="displayMetadata"
-      :display-selection-mask="displaySelection"
-      :display-tracks="displayTracks"
-      :display-scale="displayScale"
-      :seqs="seqs"
-      :selection="selection"
-      :selectable="false"
-      :width="width"
-      :tracks="tracks"
-      :height-tracks="20"
-      :colorStyle="coloringMode"
-      @select="emitSelect"
+    <div class="card-content">
+      <msa-overview
+        :display-letters-mask="!displayMetadata"
+        :display-metadata-mask="displayMetadata"
+        :display-selection-mask="displaySelection"
+        :display-tracks="displayTracks"
+        :display-scale="displayScale"
+        :seqs="seqs"
+        :selection="selection"
+        :selectable="false"
+        :width="width-10"
+        :tracks="tracks"
+        :height-tracks="20"
+        :colorStyle="coloringMode"
+        @select="emitSelect"
     ></msa-overview>
+    </div>
    </v-card-gene-explore>
   </div>
 </template>

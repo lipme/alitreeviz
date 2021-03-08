@@ -9,13 +9,6 @@
 // See the License for the specific language governing permissions and
 //    limitations under the License.
 <template>
-  <!-- <v-tooltip bottom>
-    <template v-slot:activator="{ on }">
-      <v-icon v-on="on" @click="click">mdi-help-circle</v-icon>
-    </template>
-    <span>{{ tooltip }}</span>
-  </v-tooltip> -->
-
   <span class="icon">
     <i class="mdi mdi-help-circle" @click="click" :title="tooltip"></i>
   </span>
