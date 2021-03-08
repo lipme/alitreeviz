@@ -129,7 +129,7 @@
     <div class="columns" v-if="!loading && !errored">
         <div :class="classColTree"  ref="colTree"
           v-resize="resizeTree" v-show="displayTree"
-          v-if="tree != null" style="min-height: 600px; max-height: 800px">
+          v-if="tree != null" style="height:90vh;">
           <!-- <v-card-gene-explore
             color="midnightblue"
             title="Tree"
@@ -151,25 +151,19 @@
           <!-- </v-card-gene-explore> -->
         </div>
 
-        <div v-resize="resizeOverview" :class="classColAln"  ref="colOverview" v-show="displayOverview || displayAln" v-if="seqs != null">
-              <v-card-gene-explore
-                v-show="displayOverview"
-                color="orange"
-                title="Alignment Overview"
-                @showParameters="showAlignmentOverviewParameters = true"
-                @hide="hideOverview"
-              >
-                <div class="container overviewContainer">
-                  <overview-panel
-                    :show-parameters="showAlignmentOverviewParameters"
-                    :seqs="seqs"
-                    :selection="overviewSelection"
-                    :width="widthOverview"
-                    :tracks="tracks"
-                    @hideParameters="showAlignmentOverviewParameters = false"
-                  ></overview-panel>
-                </div>
-              </v-card-gene-explore>
+        <div v-resize="resizeOverview" :class="classColAln"
+          ref="colOverview" v-show="displayOverview || displayAln"
+          v-if="seqs != null" style="height:90vh;">
+                <overview-panel
+                  v-show="displayOverview"
+                  :show-parameters="showAlignmentOverviewParameters"
+                  :seqs="seqs"
+                  :selection="overviewSelection"
+                  :width="widthOverview"
+                  :tracks="tracks"
+                  @hideParameters="showAlignmentOverviewParameters = false"
+                  @hide-overview="hideOverview"
+                ></overview-panel>
 
                 <alignment-panel
                   v-show="displayAln"
@@ -200,7 +194,6 @@ import resize from 'vue-resize-directive'
 import OverviewPanel from '@/components/overview/OverviewPanel.vue'
 import Tree from '@/components/tree/Tree.vue'
 import AlignmentPanel from '@/components/alignment/AlignmentPanel.vue'
-import VCardGeneExplore from '@/components/generic/VCardGeneExplore.vue'
 import PanelButton from '@/components/generic/buttons/PanelButton.vue'
 import LoadingDialog from '@/components/generic/LoadingDialog.vue'
 
@@ -221,7 +214,6 @@ export default {
     OverviewPanel,
     LoadingDialog,
     PanelButton,
-    VCardGeneExplore,
     FileUploadField
   },
   data () {
@@ -272,10 +264,10 @@ export default {
 
   computed: {
     classColTree () {
-      return this.seqs === null ? 'column is-full' : 'column is-one-third'
+      return !this.displayAln && !this.displayOverview ? 'column is-full' : 'column is-one-third'
     },
     classColAln () {
-      return this.tree === null ? 'column is-full' : 'column is-two-third'
+      return this.displayTree ? 'column is-full' : 'column is-two-third'
     },
     lengthSequence () {
       if (this.seqs != null && this.seqs.length > 0) {
