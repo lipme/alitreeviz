@@ -11,26 +11,25 @@
 <template
   >
   <div class="container main">
-    <v-alert
-      v-model="errored"
-      type="error"
-      dark
-      width="500px"
-      @click="errored = false"
-      dismissible
-    >
-      {{ errormsg }}
-    </v-alert>
+    <article class="message is-danger" v-if="errored">
+      <div class="message-header">
+        <p>Error</p>
+        <button class="delete" aria-label="delete" @click="errored = false"></button>
+      </div>
+      <div class="message-body">
+        {{errormsg}}
+      </div>
+    </article>
 
-    <v-alert
-      v-if="errorConsistency"
-      type="warning"
-      dark
-      width="500px"
-      dismissible
-    >
+    <article class="message is-warning" v-if="errorConsistency">
+      <div class="message-header">
+        <p>Warning</p>
+        <button class="delete" aria-label="delete" @click="errorConsistency = false"></button>
+      </div>
+      <div class="message-body">
       Warning : The tree and the MSA are not consistent (not the same id), strange behaviours can appear !
-    </v-alert>
+      </div>
+    </article>
 
     <div class="columns">
       <div class="column is-narrow">
@@ -248,7 +247,8 @@ export default {
         startPos: 0,
         endPos: NBPOSITIONS
       },
-      orderSequences: null
+      orderSequences: null,
+      errorConsistencyProxy: null
     }
   },
 
@@ -323,11 +323,21 @@ export default {
     /**
      * Check consistency between sequence ids and tree leave ids
      */
-    errorConsistency () {
-      if (this.sequenceIds.length > 0 && this.leaveIds.length > 0) {
-        return !this.sequenceIds.every((s) => this.leaveIds.includes(s))
+
+    errorConsistency: {
+      get: function () {
+        if (this.errorConsistencyProxy === null) {
+          if (this.sequenceIds.length > 0 && this.leaveIds.length > 0) {
+            return !this.sequenceIds.every((s) => this.leaveIds.includes(s))
+          }
+          return false
+        } else {
+          return this.errorConsistencyProxy
+        }
+      },
+      set: function (newValue) {
+        this.errorConsistencyProxy = newValue
       }
-      return false
     }
   },
   watch: {
