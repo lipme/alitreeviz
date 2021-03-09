@@ -10,139 +10,129 @@
 //    limitations under the License.
 <template
   >
-  <div class="fillHeight">
-    <!-- dialog visible during the page loading -->
-    <loading-dialog
-      :loading="loading"
-      :loadingmsg="loadingmsg"
-    ></loading-dialog>
+  <div class="main">
+    <article class="message is-danger" v-if="errored">
+      <div class="message-header">
+        <p>Error</p>
+        <button class="delete" aria-label="delete" @click="errored = false"></button>
+      </div>
+      <div class="message-body">
+        {{errormsg}}
+      </div>
+    </article>
 
-    <v-alert
-      v-model="errored"
-      type="error"
-      dark
-      width="500px"
-      @click="errored = false"
-      dismissible
-    >
-      {{ errormsg }}
-    </v-alert>
-
-    <v-alert
-      v-if="errorConsistency"
-      type="warning"
-      dark
-      width="500px"
-      dismissible
-    >
+    <article class="message is-warning" v-if="errorConsistency">
+      <div class="message-header">
+        <p>Warning</p>
+        <button class="delete" aria-label="delete" @click="errorConsistency = false"></button>
+      </div>
+      <div class="message-body">
       Warning : The tree and the MSA are not consistent (not the same id), strange behaviours can appear !
-    </v-alert>
+      </div>
+    </article>
 
-    <v-row v-if="!errored" dense justify="space-between" class="mt-3 ml-3">
-      <v-col class="text-left" cols="8">
-        <v-row justify="start">
-          <file-upload-field
-            label
-            button-label="Load Multifasta alignment file"
-            @load="loadFasta"
-          ></file-upload-field>
-          <file-upload-field
-            label
-            button-label="Load newick file"
-            @load="loadNewick"
-          ></file-upload-field>
-          <file-upload-field
-            label
-            button-label="Load new position file"
-            @load="loadPositionFile"
-            title="Load a position file. The first column must contain single positions or ranges, i.e 2 positions separated by '-' (e.g 100-110)"
-          ></file-upload-field>
-          <panel-button
-            label=""
-            :color="colorTrack"
-            :show="true"
-            title="Click to change color of the new track"
-            @click="toggleColorPicker"
-          ></panel-button>
-          <v-color-picker
-            v-show="showColorPicker"
-            dot-size="25"
-            v-model="colorTrack"
-          ></v-color-picker>
-          <v-text-field
-            single-line
-            v-model="labelTrack"
-            label="track label"
-            style="max-width: 100px"
-            title="change the label of the new track"
-          ></v-text-field>
-        </v-row>
-        <!-- <v-row>
-          <v-col class="text-left" cols="4">
-            <v-slider
-              hint="Window size"
-              thumb-label="always"
-              label="window size"
-              max="300"
-              min="10"
-              v-model="nbPositionsDisplayed"
-            />
-          </v-col>
-        </v-row> -->
-      </v-col>
-      <v-col class="text-right" cols="4">
-        <v-row justify="end">
-          <panel-button
-            label="T"
-            color="blue"
-            title="Display Tree"
-            :show="!displayTree"
-            @click="showTree"
-          ></panel-button>
-          <panel-button
-            label="A"
-            color="#006400"
-            title="Display Alignment"
-            :show="!displayAln"
-            @click="showAln"
-          ></panel-button>
-          <panel-button
-            label="O"
-            color="orange"
-            title="Display Alignment Overview"
-            :show="!displayOverview"
-            @click="showOverview"
-          ></panel-button>
-          <v-btn
-            color="red"
-            title="Reset All"
-            dark
-            fab
-            class="mr-5"
-            @click="reset"
-            >
-            Reset
-          </v-btn>
-        </v-row>
-      </v-col>
-    </v-row>
-    <v-container v-if="!loading && !errored" fluid class="align-stretch">
-      <v-row no-gutters>
-        <v-col
-          ref="colTree"
-          v-resize="resizeTree"
-          style="min-height: 600px; max-height: 800px"
-          cols="12"
-          :md="nbColsTreePanel"
-          v-show="displayTree"
-          v-if="tree != null"
-        >
-          <v-card-gene-explore
-            color="blue"
-            title="Tree"
-            @showParameters="showTreeParameters = true"
-            @hide="hideTree"
-          >
+    <div class="columns">
+      <div class="column" is-narrow>
+        <div class="columns">
+          <div class="column is-narrow">
+            <file-upload-field
+                label
+                button-label="Multifasta alignment"
+                @load="loadFasta"
+              ></file-upload-field>
+          </div>
+          <div class="column is-narrow">
+            <file-upload-field
+                label
+                button-label="Load newick file"
+                @load="loadNewick"
+              ></file-upload-field>
+          </div>
+          <div class="column is-narrow">
+            <file-upload-field
+                label
+                button-label="Load position file"
+                @load="loadPositionFile"
+                title="Load a position file. The first column must contain single positions or ranges, i.e 2 positions separated by '-' (e.g 100-110)"
+              ></file-upload-field>
+          </div>
+          <!-- <div class="column is-narrow">
+            <panel-button
+                label=""
+                :color="colorTrack"
+                :show="true"
+                title="Click to change color of the new track"
+                @click="toggleColorPicker"
+              ></panel-button>
+          </div> -->
+          <div style="width:auto;">
+            <div class="column is-narrow" style="float:left;">
+              <input type="color"
+                  v-model="colorTrack"
+                  title="change the color of the new track"
+                />
+            </div>
+            <div class="column is-narrow" style="float:left;">
+              <input type="text"
+                  v-model="labelTrack"
+                  style="padding : 2px; max-width: 100px;border:solid;border-color:black;border-radius:3%;border-width:2px;"
+                  label="track label"
+                  placeholder="Track label"
+                  title="change the label of the new track"
+                />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="column is-narrow">
+        <div class="columns flexright" >
+          <div class="column is-narrow">
+            <panel-button
+                label="T"
+                color="blue"
+                title="Display Tree"
+                :show="!displayTree"
+                @click="showTree"
+              ></panel-button>
+          </div>
+          <div class="column is-narrow">
+            <panel-button
+                label="A"
+                color="#006400"
+                title="Display Alignment"
+                :show="!displayAln"
+                @click="showAln"
+              ></panel-button>
+          </div>
+          <div class="column is-narrow">
+            <panel-button
+                label="O"
+                color="orange"
+                title="Display Alignment Overview"
+                :show="!displayOverview"
+                @click="showOverview"
+              ></panel-button>
+          </div>
+          <div class="column is-narrow">
+            <panel-button
+                color="red"
+                label="Reset"
+
+                title="Reset all"
+                show
+                @click="reset"
+                >
+            </panel-button>
+          </div>
+      </div>
+    </div>
+
+    </div>
+
+    <div class="columns panels" v-if="!errored">
+        <div :class="classColTree"  ref="colTree"
+          v-resize="resizeTree" v-show="displayTree"
+          v-if="tree != null" style="height:90vh;">
             <tree
               ref="tree"
               :height="heightTree - 100"
@@ -153,49 +143,26 @@
               @ready="setSequenceOrder"
               @select-node="selectNodes"
               @hideParameters="showTreeParameters = false"
+              @hide-tree="hideTree"
             ></tree>
-          </v-card-gene-explore>
-        </v-col>
-        <v-col
-          cols="12"
-          :md="nbColsAlignmentPanel"
-          v-show="displayOverview || displayAln"
-          v-if="seqs != null"
-        >
-          <v-row justify="space-between" no-gutters>
-            <v-col
-              ref="colOverview"
-              v-resize="resizeOverview"
-              v-show="displayOverview"
-            >
-              <v-card-gene-explore
-                color="orange"
-                title="Alignment Overview"
-                @showParameters="showAlignmentOverviewParameters = true"
-                @hide="hideOverview"
-              >
-                <v-container class="overviewContainer">
-                  <overview-panel
-                    :show-parameters="showAlignmentOverviewParameters"
-                    :seqs="seqs"
-                    :selection="overviewSelection"
-                    :width="widthOverview"
-                    :tracks="tracks"
-                    @hideParameters="showAlignmentOverviewParameters = false"
-                  ></overview-panel>
-                </v-container>
-              </v-card-gene-explore>
-            </v-col>
-          </v-row>
-          <v-row no-gutters>
-            <v-col v-show="displayAln">
-              <v-card-gene-explore
-                color="#006400"
-                title="Alignment Details"
-                @showParameters="showAlignmentParameters = true"
-                @hide="hideAln"
-              >
+        </div>
+
+        <div v-resize="resizeOverview" :class="classColAln"
+          ref="colOverview" v-show="displayOverview || displayAln"
+          v-if="seqs != null" style="height:90vh;">
+                <overview-panel
+                  v-show="displayOverview"
+                  :show-parameters="showAlignmentOverviewParameters"
+                  :seqs="seqs"
+                  :selection="overviewSelection"
+                  :width="widthOverview"
+                  :tracks="tracks"
+                  @hideParameters="showAlignmentOverviewParameters = false"
+                  @hide-overview="hideOverview"
+                ></overview-panel>
+
                 <alignment-panel
+                  v-show="displayAln"
                   :max-pos="nbPositionsDisplayed"
                   :start="selectionFromOverview.startPos"
                   :end="selectionFromOverview.endPos"
@@ -209,13 +176,10 @@
                   @hideParameters="showAlignmentParameters = false"
                   @select-node="selectNodes"
                   @extract="setSelectionFromAlignment"
+                  @hide-aln="hideAln"
                 ></alignment-panel>
-              </v-card-gene-explore>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
-    </v-container>
+          </div>
+        </div>
   </div>
 </template>
 
@@ -226,9 +190,7 @@ import resize from 'vue-resize-directive'
 import OverviewPanel from '@/components/overview/OverviewPanel.vue'
 import Tree from '@/components/tree/Tree.vue'
 import AlignmentPanel from '@/components/alignment/AlignmentPanel.vue'
-import VCardGeneExplore from '@/components/generic/VCardGeneExplore.vue'
 import PanelButton from '@/components/generic/buttons/PanelButton.vue'
-import LoadingDialog from '@/components/generic/LoadingDialog.vue'
 
 import FileUploadField from '@/components/file/FileGetContentField'
 
@@ -245,9 +207,7 @@ export default {
     Tree,
     AlignmentPanel,
     OverviewPanel,
-    LoadingDialog,
     PanelButton,
-    VCardGeneExplore,
     FileUploadField
   },
   data () {
@@ -275,11 +235,9 @@ export default {
       labelTrack: 'track',
 
       errored: false,
-      loading: false,
 
       errormsg:
         'Enable to load json file. Please make sure the json file is well formatted.',
-      loadingmsg: 'Loading...',
 
       nbPositionsDisplayed: NBPOSITIONS,
       overviewSelection: {
@@ -292,11 +250,18 @@ export default {
         startPos: 0,
         endPos: NBPOSITIONS
       },
-      orderSequences: null
+      orderSequences: null,
+      errorConsistencyProxy: null
     }
   },
 
   computed: {
+    classColTree () {
+      return ((!this.displayAln && !this.displayOverview) || this.seqs === null) ? 'column is-full' : 'column is-one-third'
+    },
+    classColAln () {
+      return (!this.displayTree || this.tree == null) ? 'column is-full' : 'column is-two-thirds'
+    },
     lengthSequence () {
       if (this.seqs != null && this.seqs.length > 0) {
         return this.seqs[0].seq.length
@@ -348,22 +313,34 @@ export default {
      * ids of the sequences
      */
     sequenceIds () {
-      return this.seqs === null ? [] : this.seqs.map(s => s.name)
+      return this.seqs === null ? [] : this.seqs.map((s) => s.name)
     },
     /**
      * ids of the leaves of thre tree
      */
     leaveIds () {
-      return this.orderSequences === null ? [] : Object.keys(this.orderSequences)
+      return this.orderSequences === null
+        ? []
+        : Object.keys(this.orderSequences)
     },
     /**
      * Check consistency between sequence ids and tree leave ids
      */
-    errorConsistency () {
-      if (this.sequenceIds.length > 0 && this.leaveIds.length > 0) {
-        return !this.sequenceIds.every(s => this.leaveIds.includes(s))
+
+    errorConsistency: {
+      get: function () {
+        if (this.errorConsistencyProxy === null) {
+          if (this.sequenceIds.length > 0 && this.leaveIds.length > 0) {
+            return !this.sequenceIds.every((s) => this.leaveIds.includes(s))
+          }
+          return false
+        } else {
+          return this.errorConsistencyProxy
+        }
+      },
+      set: function (newValue) {
+        this.errorConsistencyProxy = newValue
       }
-      return false
     }
   },
   watch: {
@@ -385,7 +362,6 @@ export default {
         )
       }
     }
-
   },
 
   methods: {
@@ -420,20 +396,16 @@ export default {
     },
 
     resizeTree () {
-      if (this.loading === false) {
-        this.heightTree =
+      this.heightTree =
           'colTree' in this.$refs ? this.$refs.colTree.clientHeight : 400
-        this.widthTree =
+      this.widthTree =
           'colTree' in this.$refs ? this.$refs.colTree.clientWidth : 600
-      }
     },
     resizeOverview () {
-      if (this.loading === false) {
-        this.widthOverview =
+      this.widthOverview =
           'colOverview' in this.$refs
             ? this.$refs.colOverview.clientWidth - 50
             : 600
-      }
     },
     showTree () {
       this.displayTree = true
@@ -594,7 +566,6 @@ export default {
       this.resetOverviewSelection()
       this.resetSelectionFromOverview()
     }
-
   },
   /**
    * Generic behaviour if an error is captured
@@ -618,15 +589,30 @@ export default {
   margin-top: 0px;
 }
 
-.v-card {
-  margin: 5px;
-}
-
-.v-alert {
-  margin: 100px auto;
-}
-
 .fillHeight {
   height: 100%;
 }
+
+.main {
+  margin: 0px;
+}
+
+.column {
+  padding : 2px;
+}
+
+.flexright {
+  display: flex;
+  align-items: flex-end;
+}
+
+.panels {
+  margin-top:5px;
+  margin-left:-22px;
+}
+
+input {
+  font-size: 12px;
+}
+
 </style>

@@ -10,48 +10,65 @@
 //    limitations under the License.
 <template>
   <div>
-    <v-dialog v-model="displayParameters" hide-overlay width="600px">
-      <v-card>
-        <v-card-title>Alignment overview parameters</v-card-title>
-        <v-card-text>
-          <v-switch
-            v-model="displayMetadata"
-            label="Displays Metadata"
-          ></v-switch>
-          <v-switch
-            v-model="displaySelection"
-            label="displays selection"
-          ></v-switch>
-          <v-switch v-model="displayTracks" label="displays tracks"></v-switch>
-          <v-switch v-model="displayScale" label="displays scale"></v-switch>
-          <v-switch
-            v-model="aaColoring"
-            label="on: amino acid coloring, off: nucleotide coloring"
-          ></v-switch>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="closeParameters()">
-            Close
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <msa-overview
-      :display-letters-mask="!displayMetadata"
-      :display-metadata-mask="displayMetadata"
-      :display-selection-mask="displaySelection"
-      :display-tracks="displayTracks"
-      :display-scale="displayScale"
-      :seqs="seqs"
-      :selection="selection"
-      :selectable="false"
-      :width="width"
-      :tracks="tracks"
-      :height-tracks="20"
-      :colorStyle="coloringMode"
-      @select="emitSelect"
+     <!-- Dialog to change parameters -->
+     <div :class="classModal">
+      <div class="modal-background" @click="closeParameters"></div>
+      <div class="modal-content">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-title">
+              Alignment overview parameters
+            </div>
+          </div>
+          <div class="card-content">
+            <label class="checkbox">
+              <input type="checkbox" v-model="displaySelection">
+              displays selection
+            </label>
+            <br />
+            <label class="checkbox">
+              <input type="checkbox" v-model="displayTracks">
+              displays tracks
+            </label>
+            <br />
+            <label class="checkbox">
+              <input type="checkbox" v-model="displayScale">
+              displays scale
+            </label>
+            <br />
+            <label class="checkbox">
+              <input type="checkbox" v-model="aaColoring">
+              on: amino acid coloring, off: nucleotide colorin
+            </label>
+          </div>
+        </div>
+      </div>
+      <button @click="closeParameters" class="modal-close is-large" aria-label="close"></button>
+    </div>
+   <v-card-gene-explore
+      color="orange"
+      title="Alignment Overview"
+      @hide="hideAlignment"
+      @show-parameters="toggleParameters"
+    >
+    <div class="card-content">
+      <msa-overview
+        :display-letters-mask="!displayMetadata"
+        :display-metadata-mask="displayMetadata"
+        :display-selection-mask="displaySelection"
+        :display-tracks="displayTracks"
+        :display-scale="displayScale"
+        :seqs="seqs"
+        :selection="selection"
+        :selectable="false"
+        :width="width-10"
+        :tracks="tracks"
+        :height-tracks="20"
+        :colorStyle="coloringMode"
+        @select="emitSelect"
     ></msa-overview>
+    </div>
+   </v-card-gene-explore>
   </div>
 </template>
 
@@ -59,9 +76,11 @@
 import { MsaOverview } from 'vue-msa-overview'
 import { displayParameters } from '@/mixins/displayParameters.js'
 
+import VCardGeneExplore from '@/components/generic/VCardGeneExplore.vue'
+
 export default {
   components: {
-    MsaOverview
+    MsaOverview, VCardGeneExplore
   },
   // import :
   // showParameters props
@@ -104,45 +123,7 @@ export default {
       displayTracks: true,
       displayScale: true,
       trackSep: 5,
-      heightTracks: 20,
-      testTracks: [
-        {
-          features: [
-            {
-              positions: [
-                [1, 20],
-                [109, 234]
-              ],
-              type: 'label1',
-              color: 'green'
-            },
-            {
-              positions: [[21, 108]],
-              type: 'label2',
-              color: 'pink'
-            }
-          ],
-          trackLabel: 'track1'
-        },
-        {
-          features: [
-            {
-              positions: [
-                [2, 32],
-                [109, 234]
-              ],
-              type: 'label1',
-              color: 'green'
-            },
-            {
-              positions: [[33, 108]],
-              type: 'label2',
-              color: 'pink'
-            }
-          ],
-          trackLabel: 'track2'
-        }
-      ]
+      heightTracks: 20
     }
   },
   computed: {
@@ -161,11 +142,17 @@ export default {
     },
     coloringMode () {
       return this.aaColoring ? 'aa' : 'nt'
+    },
+    classModal () {
+      return this.displayParameters ? ' modal is-active' : 'modal'
     }
   },
   methods: {
     emitSelect (selection) {
       this.$emit('overviewselect', selection)
+    },
+    hideAlignment () {
+      this.$emit('hide-overview')
     }
   }
 }

@@ -9,42 +9,87 @@
 // See the License for the specific language governing permissions and
 //    limitations under the License.
 <template>
-  <v-card raised>
-    <v-system-bar :color="color" dark>
+  <div class="card">
+    <div class="card-header" :style="style">
+      <div class="card-header-title" style="color:white;">
       {{ title }}
-      <v-spacer></v-spacer>
-      <show-parameters-button
+      </div>
+      <generic-button
+        v-for="(button, idx) in otherButtons"
+        :key="idx"
+        :icon="button.icon"
+        :event="button.event"
+        :tooltip="button.tooltip"
+        class="card-header-icon"
+        @click="clickOtherButton"
+      >
+      </generic-button>
+      <show-parameters-button class="card-header-icon"
         v-if="parambuttonvisible == true"
-        @click="$emit('showParameters')"
+        @click="$emit('show-parameters')"
       ></show-parameters-button>
-      <show-help-button
-        v-if="helpbuttonvisible == true"
+      <show-help-button class="card-header-icon"
+       v-if="helpbuttonvisible == true"
         @click="$emit('showHelp')"
       ></show-help-button>
-      <minimize-button
+      <minimize-button class="card-header-icon"
         v-if="minimizebuttonvisible == true"
         @click="$emit('hide')"
       ></minimize-button>
-    </v-system-bar>
+    </div>
     <slot></slot>
-  </v-card>
+  </div>
 </template>
 <script>
 import MinimizeButton from '@/components/generic/buttons/MinimizeButton.vue'
 import ShowParametersButton from '@/components/generic/buttons/ShowParametersButton.vue'
 import ShowHelpButton from '@/components/generic/buttons/ShowHelpButton.vue'
+import GenericButton from '@/components/generic/buttons/GenericButton.vue'
 
 export default {
-  components: { MinimizeButton, ShowParametersButton, ShowHelpButton },
+  components: { MinimizeButton, ShowParametersButton, ShowHelpButton, GenericButton },
   props: {
     color: { type: String, default: 'white' },
     title: { type: String, default: '' },
     parambuttonvisible: { type: Boolean, default: true },
     minimizebuttonvisible: { type: Boolean, default: true },
-    helpbuttonvisible: { type: Boolean, default: false }
+    helpbuttonvisible: { type: Boolean, default: false },
+    otherButtons: { type: Array, default: () => [] }
   },
-  data () {
-    return {}
+  computed: {
+    style () {
+      return 'background-color:' + this.color + ';'
+    }
+  },
+  methods: {
+    clickOtherButton (event) {
+      this.$emit(event)
+    }
   }
 }
 </script>
+
+<style scoped>
+
+.card-header-title{
+  font-size:12px;
+  height:20px;
+}
+
+.card-header-icon {
+  color:white;
+  padding: 0px;
+}
+
+.card {
+box-shadow: 8px 10px 5px 0px rgba(0,0,0,0.3);
+-webkit-box-shadow: 8px 10px 5px 0px rgba(0,0,0,0.3);
+-moz-box-shadow: 8px 10px 5px 0px rgba(0,0,0,0.3);
+margin : 0px 0px 10px 0px;
+padding: 0px;
+border:solid;
+border-color:grey;
+border-width: 1px;
+}
+
+</style>

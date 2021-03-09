@@ -9,18 +9,16 @@
 // See the License for the specific language governing permissions and
 //    limitations under the License.
 <template>
-  <v-btn
-    v-show="activeShow"
+<div  v-show="activeShow">
+  <button
     :title="title"
-    class="mr-5"
-    dark
-    fab
-    small
-    :color="color"
+    class="button is-rounded is-small"
+    :style="styleButton"
     @click="$emit('click')"
   >
-    {{ label }}
-  </v-btn>
+  {{label}}
+  </button>
+  </div>
 </template>
 <script>
 export default {
@@ -35,6 +33,11 @@ export default {
       activeShow: this.show
     }
   },
+  computed: {
+    styleButton () {
+      return 'background-color:' + this.color + ';color:white;'
+    }
+  },
   watch: {
     show (v) {
       this.activeShow = v
@@ -42,3 +45,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.button{border-radius: 50%; box-shadow: 3px 4px 8px 0px rgba(0,0,0,0.69);
+-webkit-box-shadow: 3px 4px 8px 0px rgba(0,0,0,0.69);
+-moz-box-shadow: 3px 4px 8px 0px rgba(0,0,0,0.69);
+border:none}
+</style>
