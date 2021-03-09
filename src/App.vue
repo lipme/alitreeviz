@@ -10,7 +10,7 @@
 //    limitations under the License.
 <template>
 <div>
-  <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+  <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
       <h1 class="title">AliTreeViz</h1>
     </div>
@@ -50,6 +50,7 @@ h1{
 nav {
   padding: 10px;
   height: 50px;
+  background-color: cornflowerblue;
 }
 
 .section {
@@ -62,6 +63,7 @@ nav {
 }
 .caption {
   font-size:14px;
+  color: white;
   display: inline-block;
   vertical-align: bottom;
   line-height: normal;
