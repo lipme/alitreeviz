@@ -16,7 +16,7 @@ Visualisation of multiple sequence alignments and phylogenetic trees.
 - Display position tracks above the MSA overview and detailed view (text file with one position per row)
 
 
-## Usage
+## Usage
 
 
 ### Test official instance
@@ -46,7 +46,7 @@ Now you can use alitreeviz directly since it does not require any server.
 npm run build
 ```
 
-### In Vue project (vue 2 compatible)
+### In Vue project (vue 2 compatible)
 
 ```
 npm install --save alitreeviz
