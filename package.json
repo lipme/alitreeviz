@@ -1,7 +1,7 @@
 {
   "name": "alitreeviz",
-  "description": "Visualisation of multiple sequence alignments and phylogentic trees",
-  "version": "1.0.1",
+  "description": "Visualisation of multiple sequence alignments and phylogenetic trees",
+  "version": "1.0.2",
   "private": false,
   "keywords": [
     "bioinformatics",
