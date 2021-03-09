@@ -10,7 +10,7 @@
 //    limitations under the License.
 <template
   >
-  <div>
+  <div class="main">
     <article class="message is-danger" v-if="errored">
       <div class="message-header">
         <p>Error</p>
@@ -37,7 +37,7 @@
           <div class="column is-narrow">
             <file-upload-field
                 label
-                button-label="Load Multifasta alignment file"
+                button-label="Multifasta alignment"
                 @load="loadFasta"
               ></file-upload-field>
           </div>
@@ -51,7 +51,7 @@
           <div class="column is-narrow">
             <file-upload-field
                 label
-                button-label="Load new position file"
+                button-label="Load position file"
                 @load="loadPositionFile"
                 title="Load a position file. The first column must contain single positions or ranges, i.e 2 positions separated by '-' (e.g 100-110)"
               ></file-upload-field>
@@ -594,7 +594,7 @@ export default {
 }
 
 .main {
-  margin: 10px;
+  margin: 0px;
 }
 
 .column {
@@ -609,6 +609,10 @@ export default {
 .panels {
   margin-top:5px;
   margin-left:-22px;
+}
+
+input {
+  font-size: 12px;
 }
 
 </style>

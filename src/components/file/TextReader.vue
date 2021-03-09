@@ -42,8 +42,9 @@ export default {
   /* Fancy button looking */
   border: 2px solid black;
   border-radius: 5px;
-  padding: 8px 12px;
+  padding: 4px 6px;
   cursor: pointer;
+  font-size:12px;
 }
 .text-reader input {
   position: absolute;

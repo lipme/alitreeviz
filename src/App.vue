@@ -15,8 +15,8 @@
       <h1 class="title">AliTreeViz</h1>
     </div>
     <div class="navbar-end">
-      <span class="caption">Explore multiple sequence alignments and phylogenetic trees
-        together</span>
+      <div class="caption">Explore multiple sequence alignments and phylogenetic trees
+        together</div>
     </div>
   </nav>
   <section class="section">
@@ -52,11 +52,18 @@ nav {
   height: 50px;
 }
 
-.main {
-  top: 150px;
+.section {
+  margin:10px;
+  padding: 30px 20px 0px 20px;
 }
 
-.caption {
-  font-size:12px;
+.navbar-end {
+  line-height: 60px;
 }
+.caption {
+  font-size:14px;
+  display: inline-block;
+  vertical-align: bottom;
+  line-height: normal;
+  }
 </style>
