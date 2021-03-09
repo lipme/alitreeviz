@@ -59,7 +59,6 @@
     "vue-msa-overview": "^1.0.0",
     "vue-phylogram": "^2.1.1",
     "vue-resize-directive": "^1.2.0",
-    "vue-router": "^3.2.0",
     "vue-slider-component": "^3.2.5",
     "vue-svg-msa": "^3.7.1"
   },
