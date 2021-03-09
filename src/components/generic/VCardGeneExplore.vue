@@ -86,6 +86,7 @@ box-shadow: 8px 10px 5px 0px rgba(0,0,0,0.3);
 -webkit-box-shadow: 8px 10px 5px 0px rgba(0,0,0,0.3);
 -moz-box-shadow: 8px 10px 5px 0px rgba(0,0,0,0.3);
 margin : 0px 0px 10px 0px;
+padding: 0px;
 border:solid;
 border-color:grey;
 border-width: 1px;

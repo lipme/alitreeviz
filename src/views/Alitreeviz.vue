@@ -10,7 +10,7 @@
 //    limitations under the License.
 <template
   >
-  <div class="container main">
+  <div>
     <article class="message is-danger" v-if="errored">
       <div class="message-header">
         <p>Error</p>
@@ -32,103 +32,107 @@
     </article>
 
     <div class="columns">
-      <div class="column is-narrow">
-        <file-upload-field
-            label
-            button-label="Load Multifasta alignment file"
-            @load="loadFasta"
-          ></file-upload-field>
+      <div class="column" is-narrow>
+        <div class="columns">
+          <div class="column is-narrow">
+            <file-upload-field
+                label
+                button-label="Load Multifasta alignment file"
+                @load="loadFasta"
+              ></file-upload-field>
+          </div>
+          <div class="column is-narrow">
+            <file-upload-field
+                label
+                button-label="Load newick file"
+                @load="loadNewick"
+              ></file-upload-field>
+          </div>
+          <div class="column is-narrow">
+            <file-upload-field
+                label
+                button-label="Load new position file"
+                @load="loadPositionFile"
+                title="Load a position file. The first column must contain single positions or ranges, i.e 2 positions separated by '-' (e.g 100-110)"
+              ></file-upload-field>
+          </div>
+          <!-- <div class="column is-narrow">
+            <panel-button
+                label=""
+                :color="colorTrack"
+                :show="true"
+                title="Click to change color of the new track"
+                @click="toggleColorPicker"
+              ></panel-button>
+          </div> -->
+          <div style="width:auto;">
+            <div class="column is-narrow" style="float:left;">
+              <input type="color"
+                  v-model="colorTrack"
+                  title="change the color of the new track"
+                />
+            </div>
+            <div class="column is-narrow" style="float:left;">
+              <input type="text"
+                  v-model="labelTrack"
+                  style="padding : 2px; max-width: 100px;border:solid;border-color:black;border-radius:3%;border-width:2px;"
+                  label="track label"
+                  placeholder="Track label"
+                  title="change the label of the new track"
+                />
+            </div>
+          </div>
+        </div>
       </div>
       <div class="column is-narrow">
-         <file-upload-field
-            label
-            button-label="Load newick file"
-            @load="loadNewick"
-          ></file-upload-field>
-      </div>
-      <div class="column is-narrow">
-        <file-upload-field
-            label
-            button-label="Load new position file"
-            @load="loadPositionFile"
-            title="Load a position file. The first column must contain single positions or ranges, i.e 2 positions separated by '-' (e.g 100-110)"
-          ></file-upload-field>
-      </div>
-      <div class="column is-narrow">
-         <panel-button
-            label=""
-            :color="colorTrack"
-            :show="true"
-            title="Click to change color of the new track"
-            @click="toggleColorPicker"
-          ></panel-button>
-      </div>
-      <div class="column is-narrow">
-         <v-color-picker
-            v-show="showColorPicker"
-            dot-size="25"
-            v-model="colorTrack"
-          ></v-color-picker>
-      </div>
-      <div class="column is-narrow">
-          <v-text-field
-            single-line
-            v-model="labelTrack"
-            label="track label"
-            style="max-width: 100px"
-            title="change the label of the new track"
-          ></v-text-field>
-      </div>
-      <div class="column is-narrow">
-        <panel-button
-            label="T"
-            color="blue"
-            title="Display Tree"
-            :show="!displayTree"
-            @click="showTree"
-          ></panel-button>
-      </div>
-       <div class="column is-narrow">
-         <panel-button
-            label="A"
-            color="#006400"
-            title="Display Alignment"
-            :show="!displayAln"
-            @click="showAln"
-          ></panel-button>
-       </div>
-       <div class="column is-narrow">
-         <panel-button
-            label="O"
-            color="orange"
-            title="Display Alignment Overview"
-            :show="!displayOverview"
-            @click="showOverview"
-          ></panel-button>
-       </div>
-       <div class="column is-narrow">
-         <panel-button
-            color="red"
-            label="Reset"
+        <div class="columns flexright" >
+          <div class="column is-narrow">
+            <panel-button
+                label="T"
+                color="blue"
+                title="Display Tree"
+                :show="!displayTree"
+                @click="showTree"
+              ></panel-button>
+          </div>
+          <div class="column is-narrow">
+            <panel-button
+                label="A"
+                color="#006400"
+                title="Display Alignment"
+                :show="!displayAln"
+                @click="showAln"
+              ></panel-button>
+          </div>
+          <div class="column is-narrow">
+            <panel-button
+                label="O"
+                color="orange"
+                title="Display Alignment Overview"
+                :show="!displayOverview"
+                @click="showOverview"
+              ></panel-button>
+          </div>
+          <div class="column is-narrow">
+            <panel-button
+                color="red"
+                label="Reset"
 
-            title="Reset all"
-            show
-            @click="reset"
-            >
-         </panel-button>
-       </div>
+                title="Reset all"
+                show
+                @click="reset"
+                >
+            </panel-button>
+          </div>
+      </div>
     </div>
 
-    <div class="columns" v-if="!errored">
+    </div>
+
+    <div class="columns panels" v-if="!errored">
         <div :class="classColTree"  ref="colTree"
           v-resize="resizeTree" v-show="displayTree"
           v-if="tree != null" style="height:90vh;">
-          <!-- <v-card-gene-explore
-            color="midnightblue"
-            title="Tree"
-            @showParameters="showTreeParameters = true"
-            @hide="hideTree"
-          > -->
             <tree
               ref="tree"
               :height="heightTree - 100"
@@ -141,7 +145,6 @@
               @hideParameters="showTreeParameters = false"
               @hide-tree="hideTree"
             ></tree>
-          <!-- </v-card-gene-explore> -->
         </div>
 
         <div v-resize="resizeOverview" :class="classColAln"
@@ -254,10 +257,10 @@ export default {
 
   computed: {
     classColTree () {
-      return !this.displayAln && !this.displayOverview ? 'column is-full' : 'column is-one-third'
+      return ((!this.displayAln && !this.displayOverview) || this.seqs === null) ? 'column is-full' : 'column is-one-third'
     },
     classColAln () {
-      return this.displayTree ? 'column is-full' : 'column is-two-third'
+      return (!this.displayTree || this.tree == null) ? 'column is-full' : 'column is-two-thirds'
     },
     lengthSequence () {
       if (this.seqs != null && this.seqs.length > 0) {
@@ -586,14 +589,6 @@ export default {
   margin-top: 0px;
 }
 
-.v-card {
-  margin: 5px;
-}
-
-.v-alert {
-  margin: 100px auto;
-}
-
 .fillHeight {
   height: 100%;
 }
@@ -601,4 +596,19 @@ export default {
 .main {
   margin: 10px;
 }
+
+.column {
+  padding : 2px;
+}
+
+.flexright {
+  display: flex;
+  align-items: flex-end;
+}
+
+.panels {
+  margin-top:5px;
+  margin-left:-22px;
+}
+
 </style>

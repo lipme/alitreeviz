@@ -12,7 +12,7 @@
 <div  v-show="activeShow">
   <button
     :title="title"
-    class="button is-rounded"
+    class="button is-rounded is-small"
     :style="styleButton"
     @click="$emit('click')"
   >
@@ -47,9 +47,8 @@ export default {
 </script>
 
 <style scoped>
-.button{border-radius: 50%; box-shadow: 7px 8px 20px 0px rgba(0,0,0,0.69);
--webkit-box-shadow: 7px 8px 20px 0px rgba(0,0,0,0.69);
--moz-box-shadow: 7px 8px 20px 0px rgba(0,0,0,0.69);
+.button{border-radius: 50%; box-shadow: 3px 4px 8px 0px rgba(0,0,0,0.69);
+-webkit-box-shadow: 3px 4px 8px 0px rgba(0,0,0,0.69);
+-moz-box-shadow: 3px 4px 8px 0px rgba(0,0,0,0.69);
 border:none}
-p{position:relative; top:-30px;}
 </style>
