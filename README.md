@@ -58,6 +58,8 @@ npm install --save alitreeviz
 </template>
 <script>
 import Alitreeviz from './views/Alitreeviz.vue'
+import 'alitreeviz/dist/alitreeviz.css'
+
 
 export default {
   name: 'App',
@@ -68,6 +70,9 @@ export default {
 }
 </script>
 ```
+
+Note: For the moment, I don't know why, margins might be added so that the component becomes centered in the page...
+
 
 ## Project setup
 ```
